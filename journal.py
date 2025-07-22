@@ -139,23 +139,52 @@ def list_entries(journal_dict):
     h, w = sc.getmaxyx()
     lines_available = (h - 3) 
     draw_title()
-    wherearewe = 0
-    for i in range(len(journal_dict)):
-        if wherearewe < lines_available:
-            sc.addstr(h-h+3+(i*2),w-w+1,f"{i}) {list(journal_dict.keys())[i]}")
-            print(f"{i}) {list(journal_dict.keys())[i]}\n")
-            wherearewe = 3 + i*2 + 2
-    curses.echo()
-    ans = sc.getstr(wherearewe,1).decode("utf-8")
-    curses.noecho()
-    #if ans == curses.KEY_ENTER or ans == 10 or ans == 13 or ans == "\n":
-    sc.clear()
-    sc.addstr(str(list(journal_dict.values())[int(ans)].load_entry()))
-    sc.refresh()
-    sc.getch()
-    #wait = input("\nWaiting...")
 
+    start = 0
+    entries_per_page = lines_available // 2 #Gives us two lines per entry
+    total_entries = len(journal_dict)
+
+    while True:
+        sc.clear()
+        draw_title()
+        line = 0
+
+        #Displaying the entries from start to start + entries per parge
+        for idx in range(start, min(start + entries_per_page, total_entries)):
+            sc.addstr(3 + (line*2), 1, f"{idx}) {list(journal_dict.keys())[idx]}")
+            line += 1
+
+        curses.echo()
+        sc.addstr(3 + (line*2), 1, "Select entry or press Enter for next page or 'q' for main menu: ")
+        sc.refresh()
+        ans = sc.getstr(3 + (line*2), 65).decode("utf-8").strip()
+        curses.noecho()
+
+        if ans == "" or ans in {"\n", "\r"}:
+            start += entries_per_page
+            if start >= total_entries:
+                start = 0
+        else:
+            try:
+                if ans == "q":
+                    return 0
+                idx = int(ans)
+                if 0 <= idx < total_entries:
+                    sc.clear()
+                    sc.addstr(lines_available,1, str(journal_dict[list(journal_dict.keys())[idx]].load_entry()))
+                    sc.refresh()
+                    sc.getch()
+                else:
+                    sc.addstr(3 + (line*2),1,"Invalid index.")
+                    sc.refresh()
+                    sc.getch()
+            except ValueError:
+                sc.addstr(3+(line*2),1,"Invalid input.")
+                sc.refresh()
+                sc.getch()
     return 0
+
+
 
 
 def turn_dict(journal_list) -> dict:
