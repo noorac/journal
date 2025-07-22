@@ -145,7 +145,10 @@ def list_entries(journal_dict):
             sc.addstr(h-h+3+(i*2),w-w+1,f"{i}) {list(journal_dict.keys())[i]}")
             print(f"{i}) {list(journal_dict.keys())[i]}\n")
             wherearewe = 3 + i*2 + 2
-    ans = sc.getkey(wherearewe,1)
+    curses.echo()
+    ans = sc.getstr(wherearewe,1).decode("utf-8")
+    curses.noecho()
+    #if ans == curses.KEY_ENTER or ans == 10 or ans == 13 or ans == "\n":
     sc.clear()
     sc.addstr(str(list(journal_dict.values())[int(ans)].load_entry()))
     sc.refresh()
