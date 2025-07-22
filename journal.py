@@ -137,12 +137,14 @@ def new_entry(journal_dict):
 def list_entries(journal_dict):
     sc.clear()
     h, w = sc.getmaxyx()
+    lines_available = (h - 3) 
     draw_title()
     wherearewe = 0
     for i in range(len(journal_dict)):
-        sc.addstr(h-h+3+(i*2),w-w+1,f"{i}) {list(journal_dict.keys())[i]}")
-        print(f"{i}) {list(journal_dict.keys())[i]}\n")
-        wherearewe = 3 + i*2 + 2
+        if wherearewe < lines_available:
+            sc.addstr(h-h+3+(i*2),w-w+1,f"{i}) {list(journal_dict.keys())[i]}")
+            print(f"{i}) {list(journal_dict.keys())[i]}\n")
+            wherearewe = 3 + i*2 + 2
     ans = sc.getkey(wherearewe,1)
     sc.clear()
     sc.addstr(str(list(journal_dict.values())[int(ans)].load_entry()))
@@ -201,6 +203,7 @@ def main(stdscr):
     startup_curses()
     filepath = "/home/noorac/.journal"
     journal_list = get_filenames(filepath)
+    journal_list.sort()
     journal_dict = turn_dict(journal_list)
     cont = True
     while cont:
