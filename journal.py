@@ -195,7 +195,7 @@ def turn_dict(journal_list) -> dict:
     journal_dict = {}
     if len(journal_list) > 0:
         for i in range(len(journal_list)):
-            journal_dict[journal_list[i]] = journal_entry(journal_list[i])
+            journal_dict[journal_list[i]] = journalentry.JournalEntry(journal_list[i]) #journal_entry(journal_list[i])
     return journal_dict
 
 
