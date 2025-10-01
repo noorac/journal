@@ -16,6 +16,9 @@ import curses
 import logging
 import os
 import sys
+import datetime
+
+import journalentry
 
 # =========================
 # Constants
@@ -37,6 +40,10 @@ logger = logging.getLogger(__name__)
 # =========================
 # Helper Functions
 # =========================
+
+def get_today() -> str:
+    """Returns the current date on the format YYYY-MM-DD"""
+    return datetime.datetime.now().strftime("%Y-%m-%d")
 
 def title_message(h,w,string):
     sc.clear()
@@ -97,39 +104,36 @@ def create_entry():
     curses.noecho()
     return entry
 
-class journal_entry:
-    def __init__(self, filename) -> None:
-        self.filename = filename
-        self.filepath = "/home/noorac/.journal/" + self.filename
-        return None
-
-    def new_entry(self):
-        self.entry_list = create_entry()
-        self.entry = ""
-        for i in range(len(self.entry_list)):
-            self.entry += self.entry_list[i]
-        self.entry = self.entry + "\n\n"
-        self.f = open(self.filepath, "a")
-        self.f.write(self.entry)
-        self.f.close()
-        return None
-
-    def load_entry(self):
-        self.f = open(self.filepath, "r")
-        for x in self.f:
-            sc.addstr(x)
-        self.f.close()
+# class journal_entry:
+#     def __init__(self, filename) -> None:
+#         self.filename = filename
+#         self.filepath = "/home/noorac/.journal/" + self.filename
+#         return None
+#
+#     def new_entry(self):
+#         self.entry_list = create_entry()
+#         self.entry = ""
+#         for i in range(len(self.entry_list)):
+#             self.entry += self.entry_list[i]
+#         self.entry = self.entry + "\n\n"
+#         self.f = open(self.filepath, "a")
+#         self.f.write(self.entry)
+#         self.f.close()
+#         return None
+#
+#     def load_entry(self):
+#         self.f = open(self.filepath, "r")
+#         for x in self.f:
+#             sc.addstr(x)
+#         self.f.close()
 
 
 def new_entry(journal_dict):
-    import datetime
-
-    now = datetime.datetime.now()
-    today = now.strftime("%Y-%m-%d")
+    today = get_today()
     if today in journal_dict:
         journal_dict[today].new_entry()
     else:
-        journal_dict[today] = journal_entry(today)
+        journal_dict[today] = journalentry.JournalEntry(today) #journal_entry(today)
         journal_dict[today].new_entry()
     return 0
 
