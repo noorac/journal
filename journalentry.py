@@ -12,21 +12,20 @@ class JournalEntry:
         """Creating the filepath dependant on the config file"""
         return self._homefolder + self._filename
 
-    @property
-    def _new_entry(self, _entry_list) -> str:
-        """Creates a new entry. This will be appended to the self.filename"""
-        #_entry_list needs to be fixed, this is the list that comes when you
-        #type out a new entry. 
-        self._entry_list = []
-        # This is a string, and what we will actually append
-        self._new_entry = ""
-        for idx in range(len(self._entry_list)):
-            self._new_entry += self._entry_list[idx]
-        self._new_entry += "\n\n"
-        return self._new_entry
-#open the file
-# self._f = open(self._filepath, "a")
-# self._f.write(self._entry)
-# self._f.close()
-# return None
+    def create_new_entry(self) -> list[str]:
+        """Here we will request the inputs from the user"""
+        pass
+
+    def build_new_entry(self) -> str:
+        """The data we get from the user is a list, we turn it into a string
+        to be saved here"""
+        return "".join(self.create_new_entry()) + "\n\n"
+
+    def write_entry(self) -> None:
+        """Write the entry to file"""
+        #open the file
+        self._f = open(self._filepath, "a")
+        self._f.write(self.build_new_entry())
+        self._f.close()
+        return None
 
