@@ -165,6 +165,7 @@ def list_entries(journal_dict):
                 idx = int(ans)
                 if 0 <= idx < total_entries:
                     sc.clear()
+                    #use load_entry(filepath) from utils.py to return an entry
                     sc.addstr(lines_available,1, str(journal_dict[list(journal_dict.keys())[idx]].load_entry()))
                     sc.refresh()
                     sc.getch()
