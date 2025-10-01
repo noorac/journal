@@ -29,3 +29,8 @@ class JournalEntry:
         self._f.close()
         return None
 
+    def load_entry(self, sc) -> None:
+        self._f = open(self._filepath, "r")
+        for x in self._f:
+            sc.addstr(x)
+        self._f.close()
