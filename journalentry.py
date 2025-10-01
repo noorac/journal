@@ -9,6 +9,11 @@ class JournalEntry:
     _homefolder: str = "/home/noorac/.journal/"
 
     @property
+    def title(self) -> str:
+        """Returns the filename, i.e. the title of the entry"""
+        return self._filename
+
+    @property
     def _filepath(self) -> str:
         """Creating the filepath dependant on the config file"""
         return self._homefolder + self._filename
