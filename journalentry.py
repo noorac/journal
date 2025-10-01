@@ -28,7 +28,6 @@ class JournalEntry:
                 entry_list.pop(-1)
             else:
                 entry_list.append(chr(key))
-        curses.noecho()
         return entry_list
 
     def build_new_entry(self, sc) -> str:
@@ -45,6 +44,8 @@ class JournalEntry:
         return None
 
     def load_entry(self, sc) -> None:
+        """Loads the file at the filepath given, and prints the content to
+            the screen"""
         self._f = open(self._filepath, "r")
         for x in self._f:
             sc.addstr(x)

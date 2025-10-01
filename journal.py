@@ -88,21 +88,11 @@ def create_entry():
     sc.clear()
     draw_title()
     sc.refresh()
-    key = -1
     curses.echo()
     sc.move(2,1)
-    entry = []
-    #Here is a bunch of mess because of different terminals call enter and 
-    #backspace different things. So need to cover bases.
-    while not ( key == curses.KEY_ENTER or key == 10 or key == 13 or key == "\n"):
-        key = sc.getch()
-        if key in ["ć", curses.KEY_BACKSPACE]:
-            sc.delch()
-            entry.pop(-1)
-        else:
-            entry.append(chr(key))
+    #JournalEntry.write_entry(sc) goes here
     curses.noecho()
-    return entry
+    return None
 
 # class journal_entry:
 #     def __init__(self, filename) -> None:
