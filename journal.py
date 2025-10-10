@@ -83,7 +83,7 @@ def get_filenames(directory):
 
 def load_journals():
     return 0
-
+#This has been tampered with.
 def create_entry():
     sc.clear()
     draw_title()
@@ -118,6 +118,8 @@ def create_entry():
 #         self.f.close()
 
 
+#This is a menu option. Looking into refactors.
+
 def new_entry(journal_dict):
     today = get_today()
     if today in journal_dict:
@@ -127,7 +129,8 @@ def new_entry(journal_dict):
         journal_dict[today].new_entry()
     return 0
 
-
+# THis is a menu option, and should be significantly refactored. It lists the
+# entries, and if we chose an entry, it can then be shown to the screen.
 def list_entries(journal_dict):
     sc.clear()
     h, w = sc.getmaxyx()
@@ -181,6 +184,9 @@ def list_entries(journal_dict):
 
 
 
+# Turn into dict? is this neccecary? Or should it be done here. It takes a 
+#list of filenames im assuming, and then builds the dict of all objects. I 
+# guess it is neccecary for now.
 
 def turn_dict(journal_list) -> dict:
     journal_dict = {}
@@ -189,6 +195,7 @@ def turn_dict(journal_list) -> dict:
             journal_dict[journal_list[i]] = journalentry.JournalEntry(journal_list[i]) #journal_entry(journal_list[i])
     return journal_dict
 
+#Menus should be rewritten in a separate menu-class?
 
 def menu(journal_dict) -> bool:
     #clear_screen()
