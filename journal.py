@@ -18,6 +18,7 @@ import os
 import sys
 import datetime
 
+import utils.utils
 import utils.date_utils
 import model.journalentry
 
@@ -190,7 +191,7 @@ def turn_dict(journal_list) -> dict:
     journal_dict = {}
     if len(journal_list) > 0:
         for i in range(len(journal_list)):
-            journal_dict[journal_list[i]] = journalentry.JournalEntry(journal_list[i]) #journal_entry(journal_list[i])
+            journal_dict[journal_list[i]] = model.journalentry.JournalEntry(journal_list[i]) #journal_entry(journal_list[i])
     return journal_dict
 
 #Menus should be rewritten in a separate menu-class?
