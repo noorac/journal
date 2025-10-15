@@ -18,7 +18,8 @@ import os
 import sys
 import datetime
 
-import journalentry
+import utils.date_utils
+import model.journalentry
 
 # =========================
 # Constants
@@ -41,9 +42,6 @@ logger = logging.getLogger(__name__)
 # Helper Functions
 # =========================
 
-def get_today() -> str:
-    """Returns the current date on the format YYYY-MM-DD"""
-    return datetime.datetime.now().strftime("%Y-%m-%d")
 
 def title_message(h,w,string):
     sc.clear()
@@ -121,11 +119,11 @@ def create_entry():
 #This is a menu option. Looking into refactors.
 
 def new_entry(journal_dict):
-    today = get_today()
+    today = utils.date_utils.get_today()
     if today in journal_dict:
         journal_dict[today].new_entry()
     else:
-        journal_dict[today] = journalentry.JournalEntry(today) #journal_entry(today)
+        journal_dict[today] = model.journalentry.JournalEntry(today) #journal_entry(today)
         journal_dict[today].new_entry()
     return 0
 
