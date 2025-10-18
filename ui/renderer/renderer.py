@@ -23,6 +23,14 @@ class Renderer:
 
     #METHODS
 
+    def clear(self) -> None:
+        """Clear the screen"""
+        self._stdscr.clear()
+
+    def refresh(self) -> None:
+        """Redraws the screen"""
+        self._stdscr.refresh()
+
     def create_color_pairs(self) -> None:
         """Generates curses color pairs
         @pair 1: fg=black, bg=red
