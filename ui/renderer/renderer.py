@@ -42,8 +42,8 @@ class Renderer:
         x = (self.w // 2) - (len(text) // 2)
         self._stdscr.addstr(y, max(0, x), text, curses.color_pair(1))
 
-    def menu_lines(self, lines: list[str], start_y: int = 3, start_x: int = 1)
-        -> None:
+    def menu_lines(self, lines: list[str], 
+                   start_y: int = 3, start_x: int = 1) -> None:
         """Prints out the menulines
         @param lines list[str]: list of menu options
         @param start_y int: what line y should start

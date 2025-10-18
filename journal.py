@@ -44,24 +44,6 @@ logger = logging.getLogger(__name__)
 # =========================
 
 
-def title_message(h,w,string):
-    sc.clear()
-    sc.addstr(h-h+1, w//2-len(string)//2,string)
-    sc.refresh()
-    time.sleep(0.75)
-    return None
-
-def startup_curses():
-    curses.use_default_colors()
-    curses.init_pair(1,curses.COLOR_BLACK,curses.COLOR_RED)
-    return None
-
-def draw_title():
-    height,width = sc.getmaxyx()
-    title = "Journal"
-    sc.addstr(height-height+1,width//2-len(title)//2,title,curses.color_pair(1))
-    return None
-
 def draw_menu():
     height, width = sc.getmaxyx()
     opt1 = "E) Press enter for new entry"
