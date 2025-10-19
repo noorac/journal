@@ -1,3 +1,4 @@
+#journallist: holds journalentry objects
 from dataclasses import dataclass, field
 from typing import List, Iterator
 

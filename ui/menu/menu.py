@@ -1,3 +1,4 @@
+#menu: menu dataclass + menu builders
 from dataclasses import dataclass
 
 @dataclass

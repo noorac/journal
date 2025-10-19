@@ -1,4 +1,4 @@
-#Model for the renderer
+#renderer: draw helpers: boxes, split panes, input
 import curses
 import time
 

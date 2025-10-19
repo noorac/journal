@@ -1,4 +1,4 @@
-#UICONTROLLER
+#uicontroller: event loop, screens, focus, routes keys
 import curses
 from menu.menu import Menu
 from renderer.renderer import Renderer

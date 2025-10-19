@@ -1,3 +1,4 @@
+#journalentry: the journal entries themselves
 
 import curses
 from dataclasses import dataclass

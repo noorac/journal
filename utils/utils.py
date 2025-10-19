@@ -1,7 +1,4 @@
-
-###################
-#Utility functions#
-###################
+#Random utility functions
 
 def load_entry(filepath: str) -> str:
     """Takes a filepath as argument, opens the file at that path for reading, 
