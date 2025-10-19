@@ -1,4 +1,5 @@
 #Journal: entry point
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
@@ -7,8 +8,6 @@ Description: Main program for journal
 Author: Kjetil Paulsen
 Date: 2025-02-17
 """
-#making a change
-#and another
 # =========================
 # Imports
 # =========================
@@ -21,7 +20,7 @@ import datetime
 
 import utils.utils
 import utils.date_utils
-import model.journalentry
+import models.journalentry
 
 # =========================
 # Constants
