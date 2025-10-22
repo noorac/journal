@@ -7,19 +7,38 @@ class UIController:
     def __init__(self, stdscr, app):
         self._stdscr = stdscr
         self.app = app
-        self.r = Renderer(stdscr)
-        self.m = Menu()
+        self.renderer = Renderer(stdscr)
+        self.menu = Menu()
+        self.title = "Journal"
 
     def run(self) -> None:
         """
         Main starting point for the whole thing
         """
-        self.draw_menu()
+        cont = True
+        while cont:
+            cont = self.draw_main_menu()
 
+    def draw_title(self) -> None:
+        self.renderer.title(self.title)
+
+    def draw_main_menu(self) -> None:
+        self.renderer.menu_lines(self.menu.main_menu)
+
+    def get_ans(self, 
+
+    def main_menu(self) -> bool:
+        cont = True
+        self.draw_title()
+        self.draw_main_menu()
+
+        return cont
+
+    def draw_new_entry(self) -> None:
         pass
 
-    def draw_menu(self) -> None:
-        self.r.menu_lines(self.m.main_menu)
+    def draw_list_entries(self) -> None:
+        pass
 
 
     def create_new_entry(self, sc) -> list[str]:

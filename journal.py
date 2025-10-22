@@ -22,6 +22,9 @@ import utils.utils
 import utils.date_utils
 import models.journalentry
 
+from app import App
+from ui import uicontroller
+
 # =========================
 # Constants
 # =========================
@@ -211,18 +214,22 @@ def main(stdscr):
     """
     Main function to run the script.
     """
-    logger.info("Starting journal.py ..")
+    # logger.info("Starting journal.py ..")
+    # time.sleep(0.5)
+    # global sc
+    # sc = stdscr
+    # startup_curses()
+    # filepath = "/home/noorac/.journal"
+    # journal_list = get_filenames(filepath)
+    # journal_list.sort()
+    # journal_dict = turn_dict(journal_list)
+    # cont = True
+    # while cont:
+    #     cont = menu(journal_dict)
     time.sleep(0.5)
-    global sc
-    sc = stdscr
-    startup_curses()
-    filepath = "/home/noorac/.journal"
-    journal_list = get_filenames(filepath)
-    journal_list.sort()
-    journal_dict = turn_dict(journal_list)
-    cont = True
-    while cont:
-        cont = menu(journal_dict)
+    app = App
+    ui = uicontroller.UIController(stdscr, app)
+    ui.run()
 
 
 # =========================
