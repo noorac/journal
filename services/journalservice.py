@@ -38,6 +38,7 @@ class JournalService:
         var.
         """
         self._list_of_entries = [x for x in self._journaldirectory.iterdir()]
+        self._list_of_entries.sort()
 
     def _build_path(self, name) -> pathlib.Path:
         """
@@ -58,7 +59,7 @@ class JournalService:
         Takes a JournalEntry object and a list of chars and writes 
         that list at the location of the object 
         """
-        with journalentry.path.open("a", encoding="utf-8") as f:
+        with journalentry.filepath.open("a", encoding="utf-8") as f:
             f.write(entry_text)
             f.write("\n\n")
         self._update_directories()

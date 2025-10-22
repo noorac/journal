@@ -50,11 +50,27 @@ class Renderer:
         x = (self.w // 2) - (len(text) // 2)
         self._stdscr.addstr(y, max(0, x), text, curses.color_pair(1))
 
-    def get_key(self, x, y) -> str:
+    def get_key(self, y, x) -> str:
         """
         TODO: Not sure if this should return str or object or something else
         """
-        return self._stdscr.getkey(x,y)
+        return self._stdscr.getkey(y, x)
+
+    def get_multi_key(self, y, x) -> str:
+        """
+        TODO: Not sure if this should return str or object or something else
+        """
+        curses.echo()
+        try:
+            inputstr = self._stdscr.getstr(y, x)
+        finally:
+            curses.noecho()
+        try:
+            return inputstr.decode("utf-8", errors="ignore")
+        #TODO: FIX EXCEPTION
+        except Exception:
+            return ""
+            return self._stdscr.getkey(y, x)
 
     def menu_lines(self, lines: list[str], 
                    start_y: int = 3, start_x: int = 1) -> None:

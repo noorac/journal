@@ -1,8 +1,9 @@
 #uicontroller: event loop, screens, focus, routes keys
 import curses
+from models.journalentry import JournalEntry
 from ui.menu.menu import Menu
 from ui.curses.renderer import Renderer
-import time
+import utils.date_utils
 
 class UIController:
     def __init__(self, stdscr, app):
@@ -37,7 +38,7 @@ class UIController:
             if str(ans) not in [curses.KEY_ENTER ,10 , 13, "\n","", "l", "q"]:
                 self.renderer.message_centered("Not an option..")
             if ans == curses.KEY_ENTER or ans == 10 or ans == 13 or ans == "\n":
-                #new_entry()
+                self.create_new_entry()
                 pass
             if str(ans) == "l":
                 self.list_entries()
@@ -52,6 +53,7 @@ class UIController:
 
     def main_menu(self) -> bool:
         cont = True
+        self.renderer.clear()
         self.draw_title()
         self.draw_main_menu()
         cont = self.check_main_menu_ans()
@@ -64,22 +66,36 @@ class UIController:
         pass
 
 
-    def create_new_entry(self, sc) -> list[str]:
+    def create_new_entry(self) -> None:
         """Here we will request the inputs from the user"""
         entry_list = []
         key = -1
+        self.renderer.clear()
+        self.renderer.refresh()
+        self.renderer._stdscr.move(2, 0)
+        curses.echo()
+
+
         #Here is a bunch of mess because of different terminals call enter and 
         #backspace different things. So need to cover bases. Essentially if 
         #enter is pressed, the loop is ended and entry saved, if backspace is 
         #pressed, it backspaces.
         while not ( key == curses.KEY_ENTER or key == 10 or key == 13 or key == "\n"):
-            key = sc.getch()
+            key = self.renderer._stdscr.getch()
             if key in ["ć", curses.KEY_BACKSPACE]:
-                sc.delch()
-                entry_list.pop(-1)
+                self.renderer.refresh_geometry()
+                h, w = self.renderer._stdscr.getyx()
+                if w == 0 and (not (h == 2)):
+                    self.renderer._stdscr.move(h-1, self.renderer.w-1)
+                self.renderer._stdscr.delch()
+                if (len(entry_list) > 0):
+                    entry_list.pop(-1)
             else:
                 entry_list.append(chr(key))
-        return entry_list
+
+        curses.noecho()
+        je = self.app.journalservice.new_entry(utils.date_utils.get_today())
+        self.app.journalservice.write_entry(je, "".join(entry_list))
 
     def list_entries(self):
         self.renderer.clear()
@@ -107,7 +123,7 @@ class UIController:
             self.renderer.refresh()
             #ans = sc.getstr(3 + (line*2), 65).decode("utf-8").strip()
             #TODO: remember that this might need decode
-            ans = self.renderer.get_key(3 + (line*2), 65)#.decode("utf-8").strip()
+            ans = self.renderer.get_multi_key(3 + (line*2), 65)#.decode("utf-8").strip()
             curses.noecho()
 
             if ans == "" or ans in {"\n", "\r"}:
@@ -123,7 +139,7 @@ class UIController:
                         self.renderer.clear()
                         #use load_entry(filepath) from utils.py to return an entry
                         je = self.app.journalservice.new_entry(self.app.journalservice.list_of_entries[idx])
-                        self.renderer.prompt(lines_available,1, str(self.app.journalservice.read_entry(je)))
+                        self.renderer.prompt(1,1, self.app.journalservice.read_entry(je))
                         self.renderer.refresh()
                         #TODO: fix this underscore
                         self.renderer._stdscr.getch()
