@@ -1,13 +1,14 @@
 #journalentry: the journal entries themselves
 
 import curses
+import pathlib
 from dataclasses import dataclass
 
 @dataclass
 class JournalEntry:
     """Creating each journal entry as an object"""
     _filename: str
-    _homefolder: str = "/home/noorac/.journal/"
+    _filepath: pathlib.Path
 
     @property
     def title(self) -> str:
@@ -15,9 +16,9 @@ class JournalEntry:
         return self._filename
 
     @property
-    def _filepath(self) -> str:
+    def filepath(self) -> str:
         """Creating the filepath dependant on the config file"""
-        return self._homefolder + self._filename
+        return self._filepath.as_posix()
 
     def create_new_entry(self, sc) -> list[str]:
         """Here we will request the inputs from the user"""
