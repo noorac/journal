@@ -1,6 +1,5 @@
 #journalentry: the journal entries themselves
 
-import pathlib
 
 class JournalEntry:
     """Creating each journal entry as an object"""
