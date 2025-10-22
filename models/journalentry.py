@@ -1,24 +1,32 @@
 #journalentry: the journal entries themselves
 
-import curses
 import pathlib
-from dataclasses import dataclass
 
-@dataclass
 class JournalEntry:
     """Creating each journal entry as an object"""
-    _filename: str
-    _filepath: pathlib.Path
+    def __init__(self, filepath) -> None:
+        self._filepath = filepath
 
     @property
     def title(self) -> str:
-        """Returns the filename, i.e. the title of the entry"""
-        return self._filename
+        """
+        Returns the filename as a string
+        """
+        return self._filepath.stem
+
+    @property
+    def filepath_str(self) -> str:
+        """
+        Returns the full path of the file as a string
+        """
+        return self._filepath.as_posix()
 
     @property
     def filepath(self) -> str:
-        """Creating the filepath dependant on the config file"""
-        return self._filepath.as_posix()
+        """
+        Returns the full path of the file as a string
+        """
+        return self._filepath
 
     def create_new_entry(self, sc) -> list[str]:
         """Here we will request the inputs from the user"""

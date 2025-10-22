@@ -12,16 +12,25 @@ class JournalService:
     """
     def __init__(self, journaldirectory: str) -> None:
         self._journaldirectory = pathlib.Path(journaldirectory).expanduser()
-        self._list_of_entries = self.update_directories()
+        self._journaldirectory.mkdir(parents=True, exist_ok=True)
+        self._update_directories()
 
     @property
     def journaldirectory(self) -> str:
         """
-        Returns the journaldirectory as a string
+        Returns the location where the journals are saved as a string
         """
         return self._journaldirectory.as_posix()
 
-    def update_directories(self) -> None:
+    @property
+    def list_of_entries(self) -> list[str]:
+        """
+        Returns a list containing the names of all the files in 
+        journaldirectory as strings
+        """
+        return [x.stem for x in self._list_of_entries]
+
+    def _update_directories(self) -> None:
         """
         Traverses the directory set in .config(currently hardcoded to be
         "~/.journal") and creates a list of posix-objects for each file in the
@@ -29,7 +38,6 @@ class JournalService:
         var.
         """
         self._list_of_entries = [x for x in self._journaldirectory.iterdir()]
-        return None
 
     def _build_path(self, name) -> pathlib.Path:
         """
@@ -42,17 +50,18 @@ class JournalService:
         Generates a new JournalEntry object with _filename = name and
         _filepath = PosixPath object.
         """
-        return journalentry.JournalEntry(_filename = name, _homefolder = self._build_path(name))
+        return journalentry.JournalEntry(filepath = self._build_path(name))
 
 
-    def write_entry(self, journalentry) -> None:
+    def write_entry(self, journalentry, entry_text) -> None:
         """
-        Takes a JournalEntry object and writes that object to file
+        Takes a JournalEntry object and a list of chars and writes 
+        that list at the location of the object 
         """
         with journalentry.path.open("a", encoding="utf-8") as f:
-            f.write(journalentry.entry)
+            f.write(entry_text)
             f.write("\n\n")
-        self.update_directories()
+        self._update_directories()
         return None
 
     def read_entry(self, journalentry) -> str:
@@ -60,7 +69,8 @@ class JournalService:
         Takes a journalentry object and tries to open and read the content
         of the object.
         """
-        entry = journalentry.path.read_text
-        with journalentry.path("r", encoding="utf-8") as f:
-            f.read
-        return
+        if journalentry.filepath.is_file():
+            return journalentry.path.read_text
+        else:
+            return "File doesn't exist"
+        
