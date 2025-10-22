@@ -50,6 +50,12 @@ class Renderer:
         x = (self.w // 2) - (len(text) // 2)
         self._stdscr.addstr(y, max(0, x), text, curses.color_pair(1))
 
+    def get_key(self, x, y) -> str:
+        """
+        TODO: Not sure if this should return str or object or something else
+        """
+        return self._stdscr.getkey(x,y)
+
     def menu_lines(self, lines: list[str], 
                    start_y: int = 3, start_x: int = 1) -> None:
         """Prints out the menulines

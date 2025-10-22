@@ -70,7 +70,7 @@ class JournalService:
         of the object.
         """
         if journalentry.filepath.is_file():
-            return journalentry.path.read_text
+            return journalentry.filepath.read_text()
         else:
             return "File doesn't exist"
         

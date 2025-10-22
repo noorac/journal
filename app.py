@@ -7,6 +7,6 @@ class App:
     """
     A starting point
     """
-    def __init__(self) -> None:
-        self.journalservice = journalservice.JournalService
+    def __init__(self, journaldirectory) -> None:
+        self.journalservice = journalservice.JournalService(journaldirectory)
 

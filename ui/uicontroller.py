@@ -1,7 +1,8 @@
 #uicontroller: event loop, screens, focus, routes keys
 import curses
-from menu.menu import Menu
-from curses.renderer import Renderer
+from ui.menu.menu import Menu
+from ui.curses.renderer import Renderer
+import time
 
 class UIController:
     def __init__(self, stdscr, app):
@@ -17,7 +18,7 @@ class UIController:
         """
         cont = True
         while cont:
-            cont = self.draw_main_menu()
+            cont = self.main_menu()
 
     def draw_title(self) -> None:
         self.renderer.title(self.title)
@@ -25,13 +26,35 @@ class UIController:
     def draw_main_menu(self) -> None:
         self.renderer.menu_lines(self.menu.main_menu)
 
-    def get_ans(self, 
+    def check_main_menu_ans(self) -> bool:
+        """
+        Might change this logic. Just get the key, then pass that key to
+        some other function later
+        """
+        cont = True
+        ans = self.renderer.get_key(8,1)
+        try:
+            if str(ans) not in [curses.KEY_ENTER ,10 , 13, "\n","", "l", "q"]:
+                self.renderer.message_centered("Not an option..")
+            if ans == curses.KEY_ENTER or ans == 10 or ans == 13 or ans == "\n":
+                #new_entry()
+                pass
+            if str(ans) == "l":
+                self.list_entries()
+                pass
+            if str(ans) == "q":
+                self.renderer.message_centered("Exiting ..")
+                cont = False
+        except ValueError:
+            print(f"Not a string")
+        return cont
+
 
     def main_menu(self) -> bool:
         cont = True
         self.draw_title()
         self.draw_main_menu()
-
+        cont = self.check_main_menu_ans()
         return cont
 
     def draw_new_entry(self) -> None:
@@ -58,6 +81,60 @@ class UIController:
                 entry_list.append(chr(key))
         return entry_list
 
+    def list_entries(self):
+        self.renderer.clear()
+        self.renderer.refresh_geometry()
+        lines_available = (self.renderer.h - 3) 
+        self.draw_title()
 
+        start = 0
+        entries_per_page = lines_available // 2 #Gives us two lines per entry
+        total_entries = len(self.app.journalservice.list_of_entries)
 
+        while True:
+            self.renderer.clear()
+            self.draw_title()
+            line = 0
 
+            #Displaying the entries from start to start + entries per parge
+            for idx in range(start, min(start + entries_per_page, total_entries)):
+                #sc.addstr(3 + (line*2), 1, f"{idx}) {self.app.journalservice.list_of_entries()[idx]}")
+                self.renderer.prompt(3 + (line*2), 1, f"{idx}) {self.app.journalservice.list_of_entries[idx]}")
+                line += 1
+
+            curses.echo()
+            self.renderer.prompt(3 + (line*2), 1, "Select entry or press Enter for next page or 'q' for main menu: ")
+            self.renderer.refresh()
+            #ans = sc.getstr(3 + (line*2), 65).decode("utf-8").strip()
+            #TODO: remember that this might need decode
+            ans = self.renderer.get_key(3 + (line*2), 65)#.decode("utf-8").strip()
+            curses.noecho()
+
+            if ans == "" or ans in {"\n", "\r"}:
+                start += entries_per_page
+                if start >= total_entries:
+                    start = 0
+            else:
+                try:
+                    if ans == "q":
+                        return 0
+                    idx = int(ans)
+                    if 0 <= idx < total_entries:
+                        self.renderer.clear()
+                        #use load_entry(filepath) from utils.py to return an entry
+                        je = self.app.journalservice.new_entry(self.app.journalservice.list_of_entries[idx])
+                        self.renderer.prompt(lines_available,1, str(self.app.journalservice.read_entry(je)))
+                        self.renderer.refresh()
+                        #TODO: fix this underscore
+                        self.renderer._stdscr.getch()
+                    else:
+                        self.renderer.prompt(3 + (line*2),1,"Invalid index.")
+                        self.renderer.refresh()
+                        #TODO: fix this udenrscore
+                        self.renderer._stdscr.getch()
+                except ValueError:
+                    self.renderer.prompt(3+(line*2),1,"Invalid input.")
+                    self.renderer.refresh()
+                    #TODO: fix this udenrscore
+                    self.renderer._stdscr.getch()
+        return 0
