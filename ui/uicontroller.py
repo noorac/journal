@@ -72,10 +72,27 @@ class UIController:
         key = -1
         self.renderer.clear()
         self.renderer.refresh()
-        self.renderer._stdscr.move(2, 0)
+        self.renderer._stdscr.move(1, 0)
         curses.echo()
 
+        #####Issue 12:#####
+        #if there was made an entry earlier in the day, that entry should be read
+        #and printed to screen and we should start writing for a couple of lines down from that.
+        
+        #First check if there are entries today:
 
+        if utils.date_utils.get_today() in self.app.journalservice.list_of_entries:
+
+            #Then create a new object of todays entry, print it to screen and refresh
+            todays_entries = self.app.journalservice.new_entry(utils.date_utils.get_today())
+            self.renderer.prompt(1,0, self.app.journalservice.read_entry(todays_entries))
+            self.renderer.refresh()
+
+        #Make sure the cursor is at the right spot. The following variable y is used in 
+        #the backspace check a bith further down. search for after_write_y
+        after_write_y, after_write_x = self._stdscr.getyx()
+        #####END Issue 12:#####
+        
         #Here is a bunch of mess because of different terminals call enter and 
         #backspace different things. So need to cover bases. Essentially if 
         #enter is pressed, the loop is ended and entry saved, if backspace is 
@@ -85,7 +102,7 @@ class UIController:
             if key in ["ć", curses.KEY_BACKSPACE]:
                 self.renderer.refresh_geometry()
                 h, w = self.renderer._stdscr.getyx()
-                if w == 0 and (not (h == 2)):
+                if w == 0 and (not (h == after_write_y)):
                     self.renderer._stdscr.move(h-1, self.renderer.w-1)
                 self.renderer._stdscr.delch()
                 if (len(entry_list) > 0):
