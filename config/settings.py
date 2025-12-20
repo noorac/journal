@@ -12,21 +12,20 @@ class Settings:
         self._configdirectory.mkdir(parents=True, exist_ok=True)
         self._configfile = self._configdirectory / "journal.conf"
 
+        #The actual settings are store in a dict:
+        self._conf = {}
         return None
 
     @property
-    def _configfile_exist(self) -> bool:
-        """
-        Checks if the config file already exist by running is_file from pathlib
-        """
-        return self._configfile.is_file()
+    def conf(self) -> dict:
+        return self._conf
 
     def _load_or_generate(self) -> None:
         """
         Calls _generate_config_file to create a standard config file if 
         _configfile_exist is false, or calls _load_config_file if it is True
         """
-        if self._configfile_exist:
+        if self._configfile.is_file():
             self._load_config_file()
         else:
             self._generate_config_file()
@@ -56,4 +55,5 @@ class Settings:
             for line in self._generated_config_file:
                 f.write(line + "\n")
         return None
+
 
