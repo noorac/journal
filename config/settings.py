@@ -12,18 +12,14 @@ class Settings:
         self._configdirectory.mkdir(parents=True, exist_ok=True)
         self._configfile = self._configdirectory / "journal.conf"
 
-        #check if file exists
-        self._configfile_exist = self._check_if_config_file_exist
-
-
     @property
-    def _check_if_config_file_exist(self) -> bool:
+    def _configfile_exist(self) -> bool:
         """
         Checks if the config file already exist by running is_file from pathlib
         """
         return self._configfile.is_file()
 
-    def _load_or_create(self) -> None:
+    def _load_or_generate(self) -> None:
         """
         Calls _generate_config_file to create a standard config file if 
         _configfile_exist is false, or calls _load_config_file if it is True
@@ -33,4 +29,15 @@ class Settings:
         else:
             self._generate_config_file()
 
+    def _load_config_file(self) -> None:
+        """
+        Loads the contents of the config file into a dictionary
+        """
+        pass
+
+    def _generate_config_file(self) -> None:
+        """
+        Generates a standardized config file
+        """
+        pass
 
