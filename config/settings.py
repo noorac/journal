@@ -13,6 +13,11 @@ class Settings:
         self._configfile = self._configdirectory / "journal.conf"
 
         #The actual settings are store in a dict:
+        #TODO: Need to load standard config into dict, then we can start to
+        #check if the file exist or not. If it exist we must replace the 
+        #items in the dict with the config dict. If it doesn't exist we must
+        #write the dict to the config file. This is to ensure that if the user
+        #accidentally removes a line the program doesn't crash.
         self._conf = {}
         return None
 
