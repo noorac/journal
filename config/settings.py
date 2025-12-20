@@ -15,8 +15,6 @@ class Settings:
         #check if file exists
         self._configfile_exist = self._check_if_config_file_exist
 
-        
-        pass
 
     @property
     def _check_if_config_file_exist(self) -> bool:
@@ -24,4 +22,15 @@ class Settings:
         Checks if the config file already exist by running is_file from pathlib
         """
         return self._configfile.is_file()
+
+    def _load_or_create(self) -> None:
+        """
+        Calls _generate_config_file to create a standard config file if 
+        _configfile_exist is false, or calls _load_config_file if it is True
+        """
+        if self._configfile_exist:
+            self._load_config_file()
+        else:
+            self._generate_config_file()
+
 
