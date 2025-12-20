@@ -12,6 +12,8 @@ class Settings:
         self._configdirectory.mkdir(parents=True, exist_ok=True)
         self._configfile = self._configdirectory / "journal.conf"
 
+        return None
+
     @property
     def _configfile_exist(self) -> bool:
         """
@@ -28,16 +30,30 @@ class Settings:
             self._load_config_file()
         else:
             self._generate_config_file()
+        return None
 
     def _load_config_file(self) -> None:
         """
         Loads the contents of the config file into a dictionary
         """
-        pass
+        return None
 
     def _generate_config_file(self) -> None:
         """
         Generates a standardized config file
         """
-        pass
+        self._generated_config_file = [
+            "#Set your preferences",
+            "save_path = ~/.journal",
+            ]
+        return None
+
+    def _write_entry(self) -> None:
+        """
+        Writes the generated config file
+        """
+        with self._configfile.open("w", encoding="utf-8") as f:
+            for line in self._generated_config_file:
+                f.write(line + "\n")
+        return None
 
