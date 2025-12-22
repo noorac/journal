@@ -21,12 +21,16 @@ class Settings:
         self._conf = {
             "save_path" : "~/.journal",
         }
+        self._load_or_generate()
         return None
 
     @property
     def conf(self) -> dict:
         return self._conf
 
+    @property
+    def savepath(self) -> str:
+        return self._conf["save_path"]
 
     def _load_or_generate(self) -> None:
         """
@@ -55,6 +59,7 @@ class Settings:
             ]
         for key, value in self._conf.items():
             self._generated_config_file.append(f"{key} = {value}")
+        self._write_entry()
         return None
 
     def _write_entry(self) -> None:
