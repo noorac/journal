@@ -28,9 +28,13 @@ class Settings:
     def conf(self) -> dict:
         return self._conf
 
+    ### START: Properties for entries in the config
+
     @property
     def savepath(self) -> str:
         return self._conf["save_path"]
+
+    ### END: Properties for entries in the config
 
     def _load_or_generate(self) -> None:
         """
@@ -56,15 +60,34 @@ class Settings:
                 line = f.readline()
         return lines
 
+    def _clean_comments_from_loaded_file(self, lines: list) -> list:
+        """
+        Takes a list of lines from the config file and removes lines that
+        start with #, e.g. comments
+        """
+        clean_lines = []
+        for line in lines:
+            if not(line[0] == "#"):
+                clean_lines.append(line)
+        return clean_lines
 
+    def _update_conf_with_loaded_file(self, clean_lines: list) -> None:
+        """
+        Separates the cleaned lines at the equal sign, as key and value, then
+        strips it
+        """
+        for line in clean_lines:
+            key, value = line.split("=")
+            self._conf.update({key.strip() : value.strip()})
+        return None
 
     def _load_config_file(self) -> None:
         """
         Loads the contents of the config file into a dictionary
         """
         lines = self._read_config_file()
-        lines = self._clean_comments()
-
+        clean_lines = self._clean_comments_from_loaded_file(lines)
+        self._update_conf_with_loaded_file(clean_lines)
         return None
 
     def _generate_config_file(self) -> None:
