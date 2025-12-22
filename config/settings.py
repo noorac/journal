@@ -27,6 +27,7 @@ class Settings:
     def conf(self) -> dict:
         return self._conf
 
+
     def _load_or_generate(self) -> None:
         """
         Calls _generate_config_file to create a standard config file if 
@@ -53,7 +54,7 @@ class Settings:
             "#Set your preferences",
             ]
         for key, value in self._conf.items():
-            self._generated_config_file.append(f"{key} = {value}\n")
+            self._generated_config_file.append(f"{key} = {value}")
         return None
 
     def _write_entry(self) -> None:
