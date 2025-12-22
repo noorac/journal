@@ -18,7 +18,9 @@ class Settings:
         #items in the dict with the config dict. If it doesn't exist we must
         #write the dict to the config file. This is to ensure that if the user
         #accidentally removes a line the program doesn't crash.
-        self._conf = {}
+        self._conf = {
+            "save_path" : "~/.journal",
+        }
         return None
 
     @property
@@ -46,10 +48,12 @@ class Settings:
         """
         Generates a standardized config file
         """
+
         self._generated_config_file = [
             "#Set your preferences",
-            "save_path = ~/.journal",
             ]
+        for key, value in self._conf.items():
+            self._generated_config_file.append(f"{key} = {value}\n")
         return None
 
     def _write_entry(self) -> None:
