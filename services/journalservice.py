@@ -61,7 +61,7 @@ class JournalService:
         """
         with journalentry.filepath.open("a", encoding="utf-8") as f:
             f.write(entry_text)
-            f.write("\n\n")
+            f.write("\n")
         self._update_directories()
         return None
 
