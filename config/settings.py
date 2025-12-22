@@ -43,10 +43,28 @@ class Settings:
             self._generate_config_file()
         return None
 
+    def _read_config_file(self) -> list:
+        """
+        Reads the config file and returns the file as a list of strings where
+        each line of the config file is an entry in the list
+        """
+        lines = []
+        with self._configfile.open("r") as f:
+            line = f.readline()
+            while line:
+                lines.append(line.strip())
+                line = f.readline()
+        return lines
+
+
+
     def _load_config_file(self) -> None:
         """
         Loads the contents of the config file into a dictionary
         """
+        lines = self._read_config_file()
+        lines = self._clean_comments()
+
         return None
 
     def _generate_config_file(self) -> None:
