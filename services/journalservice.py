@@ -41,16 +41,17 @@ class JournalService:
         self._list_of_entries = [x for x in self._journaldirectory.iterdir()]
         self._list_of_entries.sort()
 
-    def _build_path(self, name) -> pathlib.Path:
+    def _build_path(self, name: str) -> pathlib.Path:
         """
-        Builds a path at journaldirectory + name
+        Takes a <type> str and returns a path where the name is added to the
+        _journaldirectory path.
         """
         return self._journaldirectory / name
 
     def new_entry(self, name: str) -> journalentry.JournalEntry:
         """
-        Generates a new JournalEntry object with _filename = name and
-        _filepath = PosixPath object.
+        Takes a <type> str "name" and generates a JournalEntry object where the 
+        filepath is set to _journaldirectory/name.
         """
         return journalentry.JournalEntry(filepath = self._build_path(name))
 
