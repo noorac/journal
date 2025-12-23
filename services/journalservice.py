@@ -18,15 +18,16 @@ class JournalService:
     @property
     def journaldirectory(self) -> str:
         """
-        Returns the location where the journals are saved as a string
+        Returns the path location/directory where the journalsentries/files are 
+        saved as <type> str.
         """
         return self._journaldirectory.as_posix()
 
     @property
     def list_of_entries(self) -> list[str]:
         """
-        Returns a list containing the names of all the files in 
-        journaldirectory as strings
+        Returns a <type> list of <type> str of all filenames in the 
+        _journaldirectory.
         """
         return [x.stem for x in self._list_of_entries]
 
