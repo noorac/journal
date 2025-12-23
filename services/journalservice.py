@@ -58,8 +58,9 @@ class JournalService:
 
     def write_entry(self, journalentry, entry_text) -> None:
         """
-        Takes a JournalEntry object and a list of chars and writes 
-        that list at the location of the object 
+        Takes a JournalEntry <type> object and a <type> list of chars
+        where the list of chars is the entrytext in a journalentry. The entry
+        is then written to file.
         """
         with journalentry.filepath.open("a", encoding="utf-8") as f:
             f.write(entry_text)
@@ -69,8 +70,8 @@ class JournalService:
 
     def read_entry(self, journalentry) -> str:
         """
-        Takes a journalentry object and tries to open and read the content
-        of the object.
+        Takes a <type> object journalentry, attempts to open and then read the
+        content of file belonging to the object.
         """
         if journalentry.filepath.is_file():
             return journalentry.filepath.read_text()
