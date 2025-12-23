@@ -18,46 +18,49 @@ class JournalService:
     @property
     def journaldirectory(self) -> str:
         """
-        Returns the location where the journals are saved as a string
+        Returns the path location/directory where the journalsentries/files are 
+        saved as <type> str.
         """
         return self._journaldirectory.as_posix()
 
     @property
     def list_of_entries(self) -> list[str]:
         """
-        Returns a list containing the names of all the files in 
-        journaldirectory as strings
+        Returns a <type> list of <type> str of all filenames in the 
+        _journaldirectory.
         """
         return [x.stem for x in self._list_of_entries]
 
     def _update_directories(self) -> None:
         """
-        Traverses the directory set in .config(currently hardcoded to be
-        "~/.journal") and creates a list of posix-objects for each file in the
-        directory. This list is then contained in the self._list_of_entries
-        var.
+        Traverses the directory set in _journaldirectory and for each file in
+        the directory creates a PosixPath-oject to that file. These objects are
+        then stored in the <type> list _list_of_entries. The list is then
+        sorted.
         """
         self._list_of_entries = [x for x in self._journaldirectory.iterdir()]
         self._list_of_entries.sort()
 
-    def _build_path(self, name) -> pathlib.Path:
+    def _build_path(self, name: str) -> pathlib.Path:
         """
-        Builds a path at journaldirectory + name
+        Takes a <type> str and returns a path where the name is added to the
+        _journaldirectory path.
         """
         return self._journaldirectory / name
 
     def new_entry(self, name: str) -> journalentry.JournalEntry:
         """
-        Generates a new JournalEntry object with _filename = name and
-        _filepath = PosixPath object.
+        Takes a <type> str "name" and generates a JournalEntry object where the 
+        filepath is set to _journaldirectory/name.
         """
         return journalentry.JournalEntry(filepath = self._build_path(name))
 
 
     def write_entry(self, journalentry, entry_text) -> None:
         """
-        Takes a JournalEntry object and a list of chars and writes 
-        that list at the location of the object 
+        Takes a JournalEntry <type> object and a <type> list of chars
+        where the list of chars is the entrytext in a journalentry. The entry
+        is then written to file.
         """
         with journalentry.filepath.open("a", encoding="utf-8") as f:
             f.write(entry_text)
@@ -67,8 +70,8 @@ class JournalService:
 
     def read_entry(self, journalentry) -> str:
         """
-        Takes a journalentry object and tries to open and read the content
-        of the object.
+        Takes a <type> object journalentry, attempts to open and then read the
+        content of file belonging to the object.
         """
         if journalentry.filepath.is_file():
             return journalentry.filepath.read_text()
