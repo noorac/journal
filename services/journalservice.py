@@ -33,10 +33,10 @@ class JournalService:
 
     def _update_directories(self) -> None:
         """
-        Traverses the directory set in .config(currently hardcoded to be
-        "~/.journal") and creates a list of posix-objects for each file in the
-        directory. This list is then contained in the self._list_of_entries
-        var.
+        Traverses the directory set in _journaldirectory and for each file in
+        the directory creates a PosixPath-oject to that file. These objects are
+        then stored in the <type> list _list_of_entries. The list is then
+        sorted.
         """
         self._list_of_entries = [x for x in self._journaldirectory.iterdir()]
         self._list_of_entries.sort()
