@@ -24,7 +24,7 @@ class Renderer:
     #METHODS
 
     def clear(self) -> None:
-        """Clear the screen"""
+        """Clear the screen of any drawing"""
         self._stdscr.clear()
 
     def refresh(self) -> None:
@@ -32,7 +32,7 @@ class Renderer:
         self._stdscr.refresh()
 
     def create_color_pairs(self) -> None:
-        """Generates curses color pairs
+        """Generates curses color pairs using following logic:
         @pair 1: fg=black, bg=red
         """
         curses.init_pair(1,curses.COLOR_BLACK,curses.COLOR_RED)
