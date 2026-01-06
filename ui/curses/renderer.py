@@ -54,7 +54,8 @@ class Renderer:
 
     def get_key(self, y, x) -> str:
         """
-        TODO: Not sure if this should return str or object or something else
+        Refreshes the screen and waits for user to hit a key at the specified 
+        y and x coordinate. Returns a string
         """
         return self._stdscr.getkey(y, x)
 
