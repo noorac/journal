@@ -13,18 +13,18 @@ class Renderer:
 
     @property
     def h(self) -> int:
-        """Returns the height"""
+        """Returns the max height of the window"""
         return self._h
 
     @property
     def w(self) -> int:
-        """Returns the width"""
+        """Returns the max width of the window"""
         return self._w
 
     #METHODS
 
     def clear(self) -> None:
-        """Clear the screen"""
+        """Clear the screen of any drawing"""
         self._stdscr.clear()
 
     def refresh(self) -> None:
@@ -32,18 +32,20 @@ class Renderer:
         self._stdscr.refresh()
 
     def create_color_pairs(self) -> None:
-        """Generates curses color pairs
+        """Generates curses color pairs using following logic:
         @pair 1: fg=black, bg=red
         """
         curses.init_pair(1,curses.COLOR_BLACK,curses.COLOR_RED)
 
     def refresh_geometry(self) -> None:
-        """Refreshes the h / w values"""
+        """Refreshes the heigth and width values of the window by calling
+        getmaxyx on stdscr
+        """
         self._h, self._w = self._stdscr.getmaxyx()
 
     def title(self, text: str) -> None:
         """Draws the title
-        @param text: the title to draw
+        @param text: the string of text to draw as the title
         """
         self.refresh_geometry()
         y = 1
@@ -52,13 +54,15 @@ class Renderer:
 
     def get_key(self, y, x) -> str:
         """
-        TODO: Not sure if this should return str or object or something else
+        Refreshes the screen and waits for user to hit a key at the specified 
+        y and x coordinate. Returns a string
         """
         return self._stdscr.getkey(y, x)
 
     def get_multi_key(self, y, x) -> str:
         """
-        TODO: Not sure if this should return str or object or something else
+        Does the same as get_key, however, also turns on echo, and then turns
+        it off again. This method needs updates/fixes
         """
         curses.echo()
         try:
@@ -74,7 +78,7 @@ class Renderer:
 
     def menu_lines(self, lines: list[str], 
                    start_y: int = 3, start_x: int = 1) -> None:
-        """Prints out the menulines
+        """Prints out the menulines you send to it:
         @param lines list[str]: list of menu options
         @param start_y int: what line y should start
         @param start_x int: what character x should start
@@ -92,7 +96,7 @@ class Renderer:
 
     def message_centered(self, text: str, pause_ms: int = 750) -> None:
         """Send a message to the center of the screen for a certain amount
-            of time.
+            of time. 
         @param text str: the text to be printed
         @param pause_ms int: the amount of time in ms(default 750)
         """
