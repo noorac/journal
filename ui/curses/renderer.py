@@ -13,12 +13,12 @@ class Renderer:
 
     @property
     def h(self) -> int:
-        """Returns the height"""
+        """Returns the max height of the window"""
         return self._h
 
     @property
     def w(self) -> int:
-        """Returns the width"""
+        """Returns the max width of the window"""
         return self._w
 
     #METHODS
