@@ -61,7 +61,8 @@ class Renderer:
 
     def get_multi_key(self, y, x) -> str:
         """
-        TODO: Not sure if this should return str or object or something else
+        Does the same as get_key, however, also turns on echo, and then turns
+        it off again. This method needs updates/fixes
         """
         curses.echo()
         try:
