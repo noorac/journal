@@ -78,7 +78,7 @@ class Renderer:
 
     def menu_lines(self, lines: list[str], 
                    start_y: int = 3, start_x: int = 1) -> None:
-        """Prints out the menulines
+        """Prints out the menulines you send to it:
         @param lines list[str]: list of menu options
         @param start_y int: what line y should start
         @param start_x int: what character x should start
@@ -96,7 +96,7 @@ class Renderer:
 
     def message_centered(self, text: str, pause_ms: int = 750) -> None:
         """Send a message to the center of the screen for a certain amount
-            of time.
+            of time. 
         @param text str: the text to be printed
         @param pause_ms int: the amount of time in ms(default 750)
         """
