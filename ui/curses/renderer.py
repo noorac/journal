@@ -38,12 +38,14 @@ class Renderer:
         curses.init_pair(1,curses.COLOR_BLACK,curses.COLOR_RED)
 
     def refresh_geometry(self) -> None:
-        """Refreshes the h / w values"""
+        """Refreshes the heigth and width values of the window by calling
+        getmaxyx on stdscr
+        """
         self._h, self._w = self._stdscr.getmaxyx()
 
     def title(self, text: str) -> None:
         """Draws the title
-        @param text: the title to draw
+        @param text: the string of text to draw as the title
         """
         self.refresh_geometry()
         y = 1
