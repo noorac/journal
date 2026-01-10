@@ -86,6 +86,10 @@ class UIController:
 
     def check_if_key_is_enter(self, key: str) -> bool:
         """
+        Takes a variable called key, that represents a keypress from getch().
+        Check if this key is equal to several different types of values for 
+        ENTER. If it is return True, if not return False. Main purpose is to 
+        exit the getch() loop when writing a new entry.
         """
         if ( key == curses.KEY_ENTER or key == 10 or key == 13 or key == "\n"):
             return True
