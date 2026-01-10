@@ -229,7 +229,7 @@ def main(stdscr):
     # while cont:
     #     cont = menu(journal_dict)
     time.sleep(0.5)
-    app = App("/home/noorac/.journal")
+    app = App()
     ui = uicontroller.UIController(stdscr, app)
     ui.run()
 

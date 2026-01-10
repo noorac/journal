@@ -8,7 +8,7 @@ class App:
     """
     A starting point
     """
-    def __init__(self, journaldirectory) -> None:
+    def __init__(self) -> None:
         self.settings = settings.Settings()
         self.journalservice = journalservice.JournalService(self.settings.savepath)
 
