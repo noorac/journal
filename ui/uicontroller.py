@@ -65,6 +65,24 @@ class UIController:
     def draw_list_entries(self) -> None:
         pass
 
+    def write_todays_entries(self) -> None:
+        """
+        Checks if there have been earlier entries made today, if it has, print
+        them to the screen and refresh
+        """
+        #####Issue 12:#####
+        #if there was made an entry earlier in the day, that entry should be read
+        #and printed to screen and we should start writing for a couple of lines down from that.
+        
+        #First check if there are entries today:
+        if utils.date_utils.get_today() in self.app.journalservice.list_of_entries:
+
+            #Then create a new object of todays entry, print it to screen and refresh
+            todays_entries = self.app.journalservice.new_entry(utils.date_utils.get_today())
+            self.renderer.prompt(1,0, self.app.journalservice.read_entry(todays_entries))
+            self.renderer.refresh()
+
+        return None
 
     def create_new_entry(self) -> None:
         """Here we will request the inputs from the user"""
@@ -75,19 +93,7 @@ class UIController:
         self.renderer._stdscr.move(1, 0)
         curses.echo()
 
-        #####Issue 12:#####
-        #if there was made an entry earlier in the day, that entry should be read
-        #and printed to screen and we should start writing for a couple of lines down from that.
-        
-        #First check if there are entries today:
-
-        if utils.date_utils.get_today() in self.app.journalservice.list_of_entries:
-
-            #Then create a new object of todays entry, print it to screen and refresh
-            todays_entries = self.app.journalservice.new_entry(utils.date_utils.get_today())
-            self.renderer.prompt(1,0, self.app.journalservice.read_entry(todays_entries))
-            self.renderer.refresh()
-
+        self.write_todays_entries()
         #Make sure the cursor is at the right spot. The following variable y is used in 
         #the backspace check a bith further down. search for after_write_y
         after_write_y, after_write_x = self._stdscr.getyx()
