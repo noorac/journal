@@ -84,10 +84,19 @@ class UIController:
 
         return None
 
+    def check_if_key_is_enter(self, key: str) -> bool:
+        """
+        """
+        if ( key == curses.KEY_ENTER or key == 10 or key == 13 or key == "\n"):
+            return True
+        else:
+            return False
+        
+
     def create_new_entry(self) -> None:
         """Here we will request the inputs from the user"""
         entry_list = []
-        key = -1
+        key = str(-1)
         self.renderer.clear()
         self.renderer.refresh()
         self.renderer._stdscr.move(1, 0)
@@ -103,7 +112,7 @@ class UIController:
         #backspace different things. So need to cover bases. Essentially if 
         #enter is pressed, the loop is ended and entry saved, if backspace is 
         #pressed, it backspaces.
-        while not ( key == curses.KEY_ENTER or key == 10 or key == 13 or key == "\n"):
+        while not self.check_if_key_is_enter(key):
             key = self.renderer._stdscr.getch()
             if key in ["ć", curses.KEY_BACKSPACE]:
                 self.renderer.refresh_geometry()
