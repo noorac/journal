@@ -104,6 +104,16 @@ class UIController:
         """
         return key in ["ć", curses.KEY_BACKSPACE]
 
+    def check_and_move_if_backspacing_at_start_of_line(self, 
+                                                       starting_ypos: int) -> None:
+        """
+        Checks if the cursor is at the beginning of the line, and moves it one
+        line up if it is, except if it is the first line of the entry.
+        """
+        if self.renderer.xpos == 0 and (not (self.renderer.ypos == starting_ypos)):
+            self.renderer._stdscr.move(self.renderer.ypos-1, self.renderer.w-1)
+        return None
+
     def create_new_entry(self) -> None:
         """Here we will request the inputs from the user"""
         entry_list = []
@@ -124,8 +134,7 @@ class UIController:
             key = self.renderer._stdscr.getch()
             if self.check_if_key_is_backspace(key):
                 self.renderer.refresh_geometry()
-                if self.renderer.xpos == 0 and (not (self.renderer.ypos == starting_ypos)):
-                    self.renderer._stdscr.move(self.renderer.ypos-1, self.renderer.w-1)
+                self.check_and_move_if_backspacing_at_start_of_line(starting_ypos)
                 self.renderer._stdscr.delch()
                 if (len(entry_list) > 0):
                     entry_list.pop(-1)
