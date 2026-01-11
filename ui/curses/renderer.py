@@ -8,6 +8,7 @@ class Renderer:
         self.refresh_geometry()
         curses.use_default_colors();
         self.create_color_pairs()
+        self.getpos()
 
     #PROPERTIES
 
@@ -27,6 +28,13 @@ class Renderer:
         Returns the y position of the cursor
         """
         return self._ypos
+
+    @property
+    def xpos(self) -> int:
+        """
+        Returns the x position of the cursor
+        """
+        return self._xpos
 
     #METHODS
 
