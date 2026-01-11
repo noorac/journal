@@ -8,7 +8,6 @@ class Renderer:
         self.refresh_geometry()
         curses.use_default_colors();
         self.create_color_pairs()
-        self.getpos()
 
     #PROPERTIES
 

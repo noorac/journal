@@ -121,7 +121,7 @@ class UIController:
             if key in ["ć", curses.KEY_BACKSPACE]:
                 self.renderer.refresh_geometry()
                 h, w = self.renderer._stdscr.getyx()
-                if w == 0 and (not (h == after_write_y)):
+                if w == 0 and (not (h == self.renderer.ypos)):
                     self.renderer._stdscr.move(h-1, self.renderer.w-1)
                 self.renderer._stdscr.delch()
                 if (len(entry_list) > 0):
