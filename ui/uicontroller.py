@@ -96,6 +96,13 @@ class UIController:
         else:
             return False
         
+    def check_if_key_is_backspace(self, key: str) -> bool:
+        """
+        Takes a variable called key, that represents a keypress from getch().
+        Check if this key is qual to several different types of values for 
+        BACKSPACE. If it is, then return True, if not return False.
+        """
+        return key in ["ć", curses.KEY_BACKSPACE]
 
     def create_new_entry(self) -> None:
         """Here we will request the inputs from the user"""
@@ -115,9 +122,8 @@ class UIController:
         starting_ypos = self.renderer.ypos
         while not self.check_if_key_is_enter(key):
             key = self.renderer._stdscr.getch()
-            if key in ["ć", curses.KEY_BACKSPACE]:
+            if self.check_if_key_is_backspace(key):
                 self.renderer.refresh_geometry()
-                #h, w = self.renderer._stdscr.getyx()
                 if self.renderer.xpos == 0 and (not (self.renderer.ypos == starting_ypos)):
                     self.renderer._stdscr.move(self.renderer.ypos-1, self.renderer.w-1)
                 self.renderer._stdscr.delch()
