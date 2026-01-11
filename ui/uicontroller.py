@@ -119,7 +119,7 @@ class UIController:
                 self.renderer.refresh_geometry()
                 #h, w = self.renderer._stdscr.getyx()
                 if self.renderer.xpos == 0 and (not (self.renderer.ypos == starting_ypos)):
-                    self.renderer._stdscr.move(h-1, self.renderer.w-1)
+                    self.renderer._stdscr.move(self.renderer.ypos-1, self.renderer.w-1)
                 self.renderer._stdscr.delch()
                 if (len(entry_list) > 0):
                     entry_list.pop(-1)
