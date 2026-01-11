@@ -107,10 +107,6 @@ class UIController:
         curses.echo()
 
         self.write_todays_entries()
-        #Make sure the cursor is at the right spot. The following variable y is used in 
-        #the backspace check a bith further down. search for after_write_y
-        after_write_y, after_write_x = self._stdscr.getyx()
-        #####END Issue 12:#####
         
         #Here is a bunch of mess because of different terminals call enter and 
         #backspace different things. So need to cover bases. Essentially if 
