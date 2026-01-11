@@ -23,6 +23,12 @@ class Renderer:
 
     #METHODS
 
+    def getpos(self) -> None:
+        """
+        Sets current position of cursor by calling stdscr.getyx()
+        """
+        self._ypos, self._xpos = self._stdscr.getyx()
+
     def clear(self) -> None:
         """Clear the screen of any drawing"""
         self._stdscr.clear()
