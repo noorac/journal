@@ -27,22 +27,16 @@ class Renderer:
         """
         Returns the y position of the cursor
         """
-        return self._ypos
+        return self._stdscr.getyx()[0]
 
     @property
     def xpos(self) -> int:
         """
         Returns the x position of the cursor
         """
-        return self._xpos
+        return self._stdscr.getyx()[1]
 
     #METHODS
-
-    def getpos(self) -> None:
-        """
-        Sets current position of cursor by calling stdscr.getyx()
-        """
-        self._ypos, self._xpos = self._stdscr.getyx()
 
     def clear(self) -> None:
         """Clear the screen of any drawing"""
