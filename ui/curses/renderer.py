@@ -21,6 +21,13 @@ class Renderer:
         """Returns the max width of the window"""
         return self._w
 
+    @property
+    def ypos(self) -> int:
+        """
+        Returns the y position of the cursor
+        """
+        return self._ypos
+
     #METHODS
 
     def getpos(self) -> None:
