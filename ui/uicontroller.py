@@ -112,12 +112,13 @@ class UIController:
         #backspace different things. So need to cover bases. Essentially if 
         #enter is pressed, the loop is ended and entry saved, if backspace is 
         #pressed, it backspaces.
+        starting_ypos = self.renderer.ypos
         while not self.check_if_key_is_enter(key):
             key = self.renderer._stdscr.getch()
             if key in ["ć", curses.KEY_BACKSPACE]:
                 self.renderer.refresh_geometry()
-                h, w = self.renderer._stdscr.getyx()
-                if w == 0 and (not (h == self.renderer.ypos)):
+                #h, w = self.renderer._stdscr.getyx()
+                if self.renderer.xpos == 0 and (not (self.renderer.ypos == starting_ypos)):
                     self.renderer._stdscr.move(h-1, self.renderer.w-1)
                 self.renderer._stdscr.delch()
                 if (len(entry_list) > 0):
