@@ -119,27 +119,13 @@ class UIController:
         entry_list = []
         #key = curses.KEY_F0
         self.renderer.clear()
-        self.renderer.refresh()
+        #self.renderer.refresh()
         self.renderer._stdscr.move(1, 0)
         #curses.echo()
 
         self.write_todays_entries()
         
         starting_ypos = self.renderer.ypos
-        #Here is a bunch of mess because of different terminals call enter and 
-        #backspace different things. So need to cover bases. Essentially if 
-        #enter is pressed, the loop is ended and entry saved, if backspace is 
-        #pressed, it backspaces.
-        # while not self.check_if_key_is_enter(key):
-        #     key = self.renderer._stdscr.getch()
-        #     if self.check_if_key_is_backspace(key):
-        #         self.renderer.refresh_geometry()
-        #         self.check_and_move_if_backspacing_at_start_of_line(starting_ypos)
-        #         self.renderer._stdscr.delch()
-        #         if (len(entry_list) > 0):
-        #             entry_list.pop(-1)
-        #     else:
-        #         entry_list.append(chr(key))
         while True:
             key = self.renderer._stdscr.getch()
             if self.check_if_key_is_enter(key):
