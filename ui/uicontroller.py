@@ -143,23 +143,26 @@ class UIController:
         while True:
             key = self.renderer._stdscr.getch()
             if self.check_if_key_is_enter(key):
+                entry_list.append("\n")
                 break
-            if key == curses.KEY_BACKSPACE:
-                if not (self.renderer.xpos == 0):
+            elif key == curses.KEY_BACKSPACE:
+                if (self.renderer.xpos != 0):
                     self.renderer._stdscr.move(self.renderer.ypos, self.renderer.xpos-1)
                     if (len(entry_list) > 0):
                         entry_list.pop(-1)
                     self.renderer._stdscr.clrtoeol()
-            if self.check_if_key_is_backspace(key):
-                self.renderer.refresh_geometry()
-                self.check_and_move_if_backspacing_at_start_of_line(starting_ypos)
-                self.renderer._stdscr.delch()
-                if (len(entry_list) > 0):
-                    entry_list.pop(-1)
+                elif (self.renderer.xpos == 0 and self.renderer.ypos != starting_ypos):
+                    self.renderer._stdscr.move(self.renderer.ypos-1, self.renderer.w-1)
+                    if (len(entry_list) > 0):
+                        entry_list.pop(-1)
+                    self.renderer._stdscr.clrtoeol()
+                else:
+                    continue
             else:
+                self.renderer._stdscr.addstr(chr(key))
                 entry_list.append(chr(key))
 
-        curses.noecho()
+        #curses.noecho()
         je = self.app.journalservice.new_entry(utils.date_utils.get_today())
         self.app.journalservice.write_entry(je, "".join(entry_list))
 
