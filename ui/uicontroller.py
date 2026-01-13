@@ -84,7 +84,7 @@ class UIController:
 
         return None
 
-    def check_if_key_is_enter(self, key: str) -> bool:
+    def check_if_key_is_enter(self, key: int) -> bool:
         """
         Takes a variable called key, that represents a keypress from getch().
         Check if this key is equal to several different types of values for 
@@ -96,7 +96,7 @@ class UIController:
         else:
             return False
         
-    def check_if_key_is_backspace(self, key: str) -> bool:
+    def check_if_key_is_backspace(self, key: int) -> bool:
         """
         Takes a variable called key, that represents a keypress from getch().
         Check if this key is qual to several different types of values for 
@@ -117,21 +117,39 @@ class UIController:
     def create_new_entry(self) -> None:
         """Here we will request the inputs from the user"""
         entry_list = []
-        key = str(-1)
+        #key = curses.KEY_F0
         self.renderer.clear()
         self.renderer.refresh()
         self.renderer._stdscr.move(1, 0)
-        curses.echo()
+        #curses.echo()
 
         self.write_todays_entries()
         
+        starting_ypos = self.renderer.ypos
         #Here is a bunch of mess because of different terminals call enter and 
         #backspace different things. So need to cover bases. Essentially if 
         #enter is pressed, the loop is ended and entry saved, if backspace is 
         #pressed, it backspaces.
-        starting_ypos = self.renderer.ypos
-        while not self.check_if_key_is_enter(key):
+        # while not self.check_if_key_is_enter(key):
+        #     key = self.renderer._stdscr.getch()
+        #     if self.check_if_key_is_backspace(key):
+        #         self.renderer.refresh_geometry()
+        #         self.check_and_move_if_backspacing_at_start_of_line(starting_ypos)
+        #         self.renderer._stdscr.delch()
+        #         if (len(entry_list) > 0):
+        #             entry_list.pop(-1)
+        #     else:
+        #         entry_list.append(chr(key))
+        while True:
             key = self.renderer._stdscr.getch()
+            if self.check_if_key_is_enter(key):
+                break
+            if key == curses.KEY_BACKSPACE:
+                if not (self.renderer.xpos == 0):
+                    self.renderer._stdscr.move(self.renderer.ypos, self.renderer.xpos-1)
+                    if (len(entry_list) > 0):
+                        entry_list.pop(-1)
+                    self.renderer._stdscr.clrtoeol()
             if self.check_if_key_is_backspace(key):
                 self.renderer.refresh_geometry()
                 self.check_and_move_if_backspacing_at_start_of_line(starting_ypos)
