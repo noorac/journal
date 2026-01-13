@@ -37,7 +37,7 @@ class JournalEntry:
 
     # METHODS
 
-    def load_entry(self, text: str) -> None:
+    def load_entry(self) -> None:
         """
         This is called by journalservice if a file exist with the name of today
         and this method will then take pathlib.read_text() from that file and

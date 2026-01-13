@@ -81,8 +81,9 @@ class UIController:
             # todays_entries = self.app.journalservice.new_entry(utils.date_utils.get_today())
             # self.renderer.prompt(1,0, self.app.journalservice.read_entry(todays_entries))
             # self.renderer.refresh()
-            todays_entries = self.app.journalservice.new_entry(utils.date_utils.get_today())
-            self.renderer.prompt(1,0, self.app.journalservice.read_entry(todays_entries))
+            je = self.app.journalservice.new_entry(utils.date_utils.get_today())
+            self.app.journalservice.read_entry(je)
+            self.renderer.prompt(1,0, je.as_str())
             self.renderer.refresh()
 
         return None
