@@ -78,6 +78,9 @@ class UIController:
         if utils.date_utils.get_today() in self.app.journalservice.list_of_entries:
 
             #Then create a new object of todays entry, print it to screen and refresh
+            # todays_entries = self.app.journalservice.new_entry(utils.date_utils.get_today())
+            # self.renderer.prompt(1,0, self.app.journalservice.read_entry(todays_entries))
+            # self.renderer.refresh()
             todays_entries = self.app.journalservice.new_entry(utils.date_utils.get_today())
             self.renderer.prompt(1,0, self.app.journalservice.read_entry(todays_entries))
             self.renderer.refresh()

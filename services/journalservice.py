@@ -74,7 +74,7 @@ class JournalService:
         content of file belonging to the object.
         """
         if journalentry.filepath.is_file():
-            return journalentry.filepath.read_text()
+            return journalentry.load_entry()
         else:
             return "File doesn't exist"
         
