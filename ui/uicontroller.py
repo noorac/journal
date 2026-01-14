@@ -172,6 +172,17 @@ class UIController:
 
         self.app.journalservice.write_entry(je)
 
+    def get_list_ans(self, line: int) -> str:
+        """
+        Asks the user for an input to decide which entry to show.
+        """
+        curses.echo()
+        self.renderer.addstr(3 + (line*2), 1, "Select entry or press Enter for next page or 'q' for main menu: ")
+        self.renderer.refresh()
+        ans = self.renderer.get_multi_key(3 + (line*2), 65)#.decode("utf-8").strip()
+        curses.noecho()
+        return ans
+
     def list_entries(self):
         self.renderer.clear()
         self.renderer.refresh_geometry()
@@ -189,17 +200,11 @@ class UIController:
 
             #Displaying the entries from start to start + entries per parge
             for idx in range(start, min(start + entries_per_page, total_entries)):
-                #sc.addstr(3 + (line*2), 1, f"{idx}) {self.app.journalservice.list_of_entries()[idx]}")
                 self.renderer.addstr(3 + (line*2), 1, f"{idx}) {self.app.journalservice.list_of_entries[idx]}")
                 line += 1
 
-            curses.echo()
-            self.renderer.addstr(3 + (line*2), 1, "Select entry or press Enter for next page or 'q' for main menu: ")
-            self.renderer.refresh()
-            #ans = sc.getstr(3 + (line*2), 65).decode("utf-8").strip()
-            #TODO: remember that this might need decode
-            ans = self.renderer.get_multi_key(3 + (line*2), 65)#.decode("utf-8").strip()
-            curses.noecho()
+            #get line from user
+            ans = self.get_list_ans(line)
 
             if ans == "" or ans in {"\n", "\r"}:
                 start += entries_per_page
@@ -218,16 +223,13 @@ class UIController:
                         self.app.journalservice.read_entry(je)
                         self.renderer.addstr(0,0, je.as_str())
                         self.renderer.refresh()
-                        #TODO: fix this underscore
                         self.renderer.getch()
                     else:
                         self.renderer.addstr(3 + (line*2),1,"Invalid index.")
                         self.renderer.refresh()
-                        #TODO: fix this udenrscore
                         self.renderer.getch()
                 except ValueError:
                     self.renderer.addstr(3+(line*2),1,"Invalid input.")
                     self.renderer.refresh()
-                    #TODO: fix this udenrscore
                     self.renderer.getch()
         return 0
