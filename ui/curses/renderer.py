@@ -121,3 +121,10 @@ class Renderer:
         self._stdscr.addstr(y, max(0, x), text)
         self._stdscr.refresh()
         time.sleep(pause_ms / 1000)
+
+    def clrtoeol(self) -> None:
+        """
+        Calls the clrtoeol function on the window.
+        """
+        self._stdscr.clrtoeol()
+        return None

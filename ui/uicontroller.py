@@ -93,15 +93,15 @@ class UIController:
         """
         Takes a variable called key, that represents a keypress from getch().
         Check if this key is equal to several different types of values for 
-        ENTER. If it is return True, if not return False. Main purpose is to 
-        exit the getch() loop when writing a new entry.
+        ENTER. If it is return True, if not return False.
         """
         return key in ["\n", 10, curses.KEY_ENTER]
 
     def check_if_key_is_backspace(self, key: int) -> bool:
         """
         Takes a variable key, that represents a keypress from getch(). Check
-        if the key is equal to the press of a backspace key.
+        if the key is equal to several different types of values for BACKSPACE.
+        If it is return True, if not return False.
         """
         return key in ["ć", 263, curses.KEY_BACKSPACE]
 
@@ -159,16 +159,14 @@ class UIController:
                     continue
                 else:
                     if je.entry[-1] == " ":
-                        self.renderer._stdscr.clrtoeol()
+                        self.renderer.clrtoeol()
                         je.pop()
                         self.go_backwards()
                     elif je.entry[-1] == "\n":
                         self.go_backwards()
                         je.pop()
-                        self.renderer._stdscr.clrtoeol()
-                    else:
-                        self.find_last_entry(je)
-                        self.renderer._stdscr.clrtoeol()
+                        self.renderer.clrtoeol()
+                        self.renderer.clrtoeol()
                         je.pop()
 
             else:
