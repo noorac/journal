@@ -77,30 +77,6 @@ class UIController:
     def draw_list_entries(self) -> None:
         pass
 
-    # def write_todays_entries(self) -> None:
-    #     """
-    #     Checks if there have been earlier entries made today, if it has, print
-    #     them to the screen and refresh
-    #     """
-    #     #####Issue 12:#####
-    #     #if there was made an entry earlier in the day, that entry should be read
-    #     #and printed to screen and we should start writing for a couple of lines down from that.
-    #
-    #     #First check if there are entries today:
-    #     if utils.date_utils.get_today() in self.app.journalservice.list_of_entries:
-    #
-    #         #Then create a new object of todays entry, print it to screen and refresh
-    #         # todays_entries = self.app.journalservice.new_entry(utils.date_utils.get_today())
-    #         # self.renderer.prompt(1,0, self.app.journalservice.read_entry(todays_entries))
-    #         # self.renderer.refresh()
-    #         je = self.app.journalservice.new_entry(utils.date_utils.get_today())
-    #         self.app.journalservice.read_entry(je)
-    #         self.renderer.prompt(1,0, je.as_str())
-    #         #self.renderer.prompt(1,0, je.as_str())
-    #         self.renderer.refresh()
-    #
-    #     return None
-
     def check_if_key_is_enter(self, key: int) -> bool:
         """
         Takes a variable called key, that represents a keypress from getch().
@@ -123,7 +99,7 @@ class UIController:
         jumps up one line, and starts at the end of the previous line
         """
         if self.renderer.xpos == 0 and self.renderer.ypos != 0:
-            self.renderer.move(self.renderer.ypos-1, self.renderer.w-1)
+            self.renderer.move(self.renderer.ypos-1, self.renderer.max_w-1)
         elif self.renderer.xpos != 0:
             self.renderer.move(self.renderer.ypos, self.renderer.xpos-1)
         return None
@@ -158,7 +134,7 @@ class UIController:
         self.app.journalservice.read_entry(je)
         self.renderer.clear()
         self.renderer.move(0, 0)
-        self.renderer.prompt(0,0, je.as_str())
+        self.renderer.addstr(0,0, je.as_str())
         
         while True:
             key = self.renderer.getch()
@@ -169,8 +145,6 @@ class UIController:
                 if (len(je.entry) == 0):
                     continue
                 else:
-                    # self.debug_write_and_restore("Key:" + str(key), y = self.renderer.h-5)
-                    # self.debug_write_and_restore("Entry:" + str(je.entry[-1]), y = self.renderer.h-3)
                     if je.entry[-1] == " ":
                         #self.renderer.clrtoeol()
                         self.renderer.clrtobot()
@@ -201,7 +175,7 @@ class UIController:
     def list_entries(self):
         self.renderer.clear()
         self.renderer.refresh_geometry()
-        lines_available = (self.renderer.h - 3) 
+        lines_available = (self.renderer.max_h - 3) 
         self.draw_title()
 
         start = 0
@@ -216,11 +190,11 @@ class UIController:
             #Displaying the entries from start to start + entries per parge
             for idx in range(start, min(start + entries_per_page, total_entries)):
                 #sc.addstr(3 + (line*2), 1, f"{idx}) {self.app.journalservice.list_of_entries()[idx]}")
-                self.renderer.prompt(3 + (line*2), 1, f"{idx}) {self.app.journalservice.list_of_entries[idx]}")
+                self.renderer.addstr(3 + (line*2), 1, f"{idx}) {self.app.journalservice.list_of_entries[idx]}")
                 line += 1
 
             curses.echo()
-            self.renderer.prompt(3 + (line*2), 1, "Select entry or press Enter for next page or 'q' for main menu: ")
+            self.renderer.addstr(3 + (line*2), 1, "Select entry or press Enter for next page or 'q' for main menu: ")
             self.renderer.refresh()
             #ans = sc.getstr(3 + (line*2), 65).decode("utf-8").strip()
             #TODO: remember that this might need decode
@@ -239,18 +213,20 @@ class UIController:
                     if 0 <= idx < total_entries:
                         self.renderer.clear()
                         #use load_entry(filepath) from utils.py to return an entry
+
                         je = self.app.journalservice.new_entry(self.app.journalservice.list_of_entries[idx])
-                        self.renderer.prompt(1,1, self.app.journalservice.read_entry(je))
+                        self.app.journalservice.read_entry(je)
+                        self.renderer.addstr(0,0, je.as_str())
                         self.renderer.refresh()
                         #TODO: fix this underscore
                         self.renderer.getch()
                     else:
-                        self.renderer.prompt(3 + (line*2),1,"Invalid index.")
+                        self.renderer.addstr(3 + (line*2),1,"Invalid index.")
                         self.renderer.refresh()
                         #TODO: fix this udenrscore
                         self.renderer.getch()
                 except ValueError:
-                    self.renderer.prompt(3+(line*2),1,"Invalid input.")
+                    self.renderer.addstr(3+(line*2),1,"Invalid input.")
                     self.renderer.refresh()
                     #TODO: fix this udenrscore
                     self.renderer.getch()

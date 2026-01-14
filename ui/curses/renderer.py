@@ -12,14 +12,14 @@ class Renderer:
     #PROPERTIES
 
     @property
-    def h(self) -> int:
+    def max_h(self) -> int:
         """Returns the max height of the window"""
-        return self._h
+        return self._max_h
 
     @property
-    def w(self) -> int:
+    def max_w(self) -> int:
         """Returns the max width of the window"""
-        return self._w
+        return self._max_w
 
     @property
     def ypos(self) -> int:
@@ -43,14 +43,6 @@ class Renderer:
         """
         return getattr(self._win, name)
 
-    # def clear(self) -> None:
-    #     """Clear the screen of any drawing"""
-    #     self._win.clear()
-
-    # def refresh(self) -> None:
-    #     """Redraws the screen"""
-    #     self._win.refresh()
-
     def create_color_pairs(self) -> None:
         """Generates curses color pairs using following logic:
         @pair 1: fg=black, bg=red
@@ -61,7 +53,7 @@ class Renderer:
         """Refreshes the heigth and width values of the window by calling
         getmaxyx on win
         """
-        self._h, self._w = self._win.getmaxyx()
+        self._max_h, self._max_w = self._win.getmaxyx()
 
     def title(self, text: str) -> None:
         """Draws the title
@@ -69,7 +61,7 @@ class Renderer:
         """
         self.refresh_geometry()
         y = 1
-        x = (self.w // 2) - (len(text) // 2)
+        x = (self.max_w // 2) - (len(text) // 2)
         self._win.addstr(y, max(0, x), text, curses.color_pair(1))
 
     def get_key(self, y, x) -> str:
@@ -106,13 +98,13 @@ class Renderer:
         for i, line in enumerate(lines):
             self._win.addstr(start_y + i, start_x, line)
 
-    def prompt(self, y: int, x: int, prompt_text: str) -> None:
-        """Called to make a prompt to screen
-        @param y int: what line y should the prompt be on
-        @param x int: what character x should the prompt be on
-        @param prompt_text str: the text of the prompt
-        """
-        self._win.addstr(y, x, prompt_text)
+    # def prompt(self, y: int, x: int, prompt_text: str) -> None:
+    #     """Called to make a prompt to screen
+    #     @param y int: what line y should the prompt be on
+    #     @param x int: what character x should the prompt be on
+    #     @param prompt_text str: the text of the prompt
+    #     """
+    #     self._win.addstr(y, x, prompt_text)
 
 
     def message_centered(self, text: str, pause_ms: int = 750) -> None:
@@ -124,7 +116,7 @@ class Renderer:
         self._win.clear()
         self.refresh_geometry()
         y = 1
-        x = (self.w // 2) - (len(text) // 2)
+        x = (self.max_w // 2) - (len(text) // 2)
         self._win.addstr(y, max(0, x), text)
         self._win.refresh()
         time.sleep(pause_ms / 1000)
