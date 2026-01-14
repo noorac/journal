@@ -100,28 +100,30 @@ class UIController:
             return True
         else:
             return False
-        
-    def check_if_key_is_backspace(self, key: int) -> bool:
-        """
-        Takes a variable called key, that represents a keypress from getch().
-        Check if this key is qual to several different types of values for 
-        BACKSPACE. If it is, then return True, if not return False.
-        """
-        return key in ["ć", curses.KEY_BACKSPACE]
 
-    def check_and_move_if_backspacing_at_start_of_line(self, 
-                                                       starting_ypos: int) -> None:
-        """
-        Checks if the cursor is at the beginning of the line, and moves it one
-        line up if it is, except if it is the first line of the entry.
-        """
-        if self.renderer.xpos == 0 and (not (self.renderer.ypos == starting_ypos)):
-            self.renderer._stdscr.move(self.renderer.ypos-1, self.renderer.w-1)
-        return None
+        
+    # def check_if_key_is_backspace(self, key: int) -> bool:
+    #     """
+    #     Takes a variable called key, that represents a keypress from getch().
+    #     Check if this key is qual to several different types of values for 
+    #     BACKSPACE. If it is, then return True, if not return False.
+    #     """
+    #     return key in ["ć", curses.KEY_BACKSPACE]
+
+    # def check_and_move_if_backspacing_at_start_of_line(self, 
+    #                                                    starting_ypos: int) -> None:
+    #     """
+    #     Checks if the cursor is at the beginning of the line, and moves it one
+    #     line up if it is, except if it is the first line of the entry.
+    #     """
+    #     if self.renderer.xpos == 0 and (not (self.renderer.ypos == starting_ypos)):
+    #         self.renderer._stdscr.move(self.renderer.ypos-1, self.renderer.w-1)
+    #     return None
 
     def go_backwards(self) -> None:
         """
-        Jumps backwards
+        Moves the cursor one cell backwards. If at the beginning of a line it 
+        jumps up one line, and starts at the end of the previous line
         """
         if self.renderer.xpos == 0 and self.renderer.ypos != 0:
             self.renderer._stdscr.move(self.renderer.ypos-1, self.renderer.w-1)
@@ -131,7 +133,8 @@ class UIController:
 
     def compare_entry_cell(self, je: journalentry.JournalEntry) -> bool:
         """
-        Returns true if entry[-1] == content of cell the cursor is over
+        Returns true if je.entry[-1] is equal to the content of cell under the
+        cursor
         """
         cell = self.renderer._stdscr.inch(self.renderer.ypos, self.renderer.xpos)
         ch = chr(cell & curses.A_CHARTEXT)
@@ -142,8 +145,8 @@ class UIController:
 
     def find_last_entry(self, je: journalentry.JournalEntry) -> None:
         """
-        Goes looking for the cell in the screen that contains a character
-        similar to the last element in je.entry list
+        Takes a journalentry object, and runs a loop until the the je.entry[-1]
+        is equal to what is under the cursor
         """
         while True:
             if self.compare_entry_cell(je):
@@ -157,17 +160,10 @@ class UIController:
         """Here we will request the inputs from the user"""
         je = self.app.journalservice.new_entry(utils.date_utils.get_today())
         self.app.journalservice.read_entry(je)
-        #entry_list = []
-        #key = curses.KEY_F0
         self.renderer.clear()
-        #self.renderer.refresh()
         self.renderer._stdscr.move(0, 0)
-        #curses.echo()
-
-        #self.write_todays_entries()
-        self.renderer.prompt(1,0, je.as_str())
+        self.renderer.prompt(0,0, je.as_str())
         
-        starting_ypos = self.renderer.ypos
         while True:
             key = self.renderer._stdscr.getch()
             if self.check_if_key_is_enter(key):
@@ -177,7 +173,6 @@ class UIController:
                 if (len(je.entry) == 0):
                     continue
                 else:
-                    #rewrite
                     if je.entry[-1] == " ":
                         self.renderer._stdscr.clrtoeol()
                         je.pop()
@@ -187,7 +182,6 @@ class UIController:
                         je.pop()
                         self.renderer._stdscr.clrtoeol()
                     else:
-                        #Go backwards until entry is equal to cell
                         self.find_last_entry(je)
                         self.renderer._stdscr.clrtoeol()
                         je.pop()
