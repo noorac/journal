@@ -232,6 +232,7 @@ def main(stdscr):
     #Curses startup
     curses.cbreak()
     curses.noecho()
+    curses.curs_set(0)
     stdscr.keypad(True)
 
     time.sleep(0.5)

@@ -55,19 +55,18 @@ class Renderer:
         """
         self._max_h, self._max_w = self._win.getmaxyx()
 
-    def title(self, text: str) -> None:
-        """Draws the title
-        @param text: the string of text to draw as the title
-        """
-        self.refresh_geometry()
-        y = 0
-        x = (self.max_w // 2) - (len(text) // 2)
-        
-        #Hardcoded attributes:
-        attr = curses.color_pair(1) | curses.A_UNDERLINE | curses.A_BOLD
-
-        self._win.addstr(y, max(0, x), text, attr)
-        self._win.refresh()
+    # def title(self, text: str) -> None:
+    #     """Draws the title
+    #     @param text: the string of text to draw as the title
+    #     """
+    #     self.refresh_geometry()
+    #     y = 0
+    #     x = (self.max_w // 2) - (len(text) // 2)
+    #
+    #     #Hardcoded attributes:
+    #
+    #     self._win.addstr(y, max(0, x), text, attr)
+    #     self._win.refresh()
 
 
     def get_multi_key(self, y, x) -> str:
@@ -106,7 +105,7 @@ class Renderer:
     #     self._win.addstr(y, x, prompt_text)
 
 
-    def message_centered(self, text: str, pause_ms: int = 750) -> None:
+    def message_centered(self, text: str, y: int = 0, attr: int = curses.A_NORMAL) -> None:
         """Send a message to the center of the screen for a certain amount
             of time. 
         @param text str: the text to be printed
@@ -114,9 +113,7 @@ class Renderer:
         """
         self._win.clear()
         self.refresh_geometry()
-        y = 1
         x = (self.max_w // 2) - (len(text) // 2)
-        self._win.addstr(y, max(0, x), text)
+        self._win.addstr(y, max(0, x), text, attr)
         self._win.refresh()
-        time.sleep(pause_ms / 1000)
 

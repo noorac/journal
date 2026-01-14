@@ -1,5 +1,6 @@
 #uicontroller: event loop, screens, focus, routes keys
 import curses
+import time
 from models import journalentry
 from models.journalentry import JournalEntry
 from ui.menu.menu import Menu
@@ -70,7 +71,9 @@ class UIController:
             cont = self.main_menu()
 
     def draw_title(self) -> None:
-        self.title_w.title(self.title_text)
+        #self.title_w.title(self.title_text)
+        attr = curses.color_pair(1) | curses.A_UNDERLINE | curses.A_BOLD
+        self.title_w.message_centered(self.title_text, attr = attr)
 
     def draw_main_menu(self) -> None:
         self.main_w.menu_lines(self.menu.main_menu)
@@ -81,9 +84,7 @@ class UIController:
         some other function later
         """
         cont = True
-        curses.curs_set(0)
         ans = self.main_w.getkey(8,1)
-        curses.curs_set(1)
         try:
             if str(ans) not in [curses.KEY_ENTER ,10 , 13, "\n","", "l", "q"]:
                 self.main_w.message_centered("Not an option..")
@@ -94,7 +95,8 @@ class UIController:
                 self.list_entries()
                 pass
             if str(ans) == "q":
-                self.main_w.message_centered("Exiting ..")
+                self.main_w.message_centered("Exiting ..", y = 2)
+                time.sleep(750/1000)
                 cont = False
         except ValueError:
             print(f"Not a string")
@@ -175,7 +177,9 @@ class UIController:
         self.main_w.addstr(0,0, je.as_str())
         
         while True:
+            curses.curs_set(1)
             key = self.main_w.getkey()
+            curses.curs_set(0)
             if self.check_if_key_is_enter(key):
                 je.append(key)
                 break
