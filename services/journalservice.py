@@ -56,14 +56,14 @@ class JournalService:
         return journalentry.JournalEntry(filepath = self._build_path(name))
 
 
-    def write_entry(self, journalentry, entry_text) -> None:
+    def write_entry(self, journalentry) -> None:
         """
         Takes a JournalEntry <type> object and a <type> list of chars
         where the list of chars is the entrytext in a journalentry. The entry
         is then written to file.
         """
-        with journalentry.filepath.open("a", encoding="utf-8") as f:
-            f.write(entry_text)
+        with journalentry.filepath.open("w", encoding="utf-8") as f:
+            f.write(journalentry.as_str())
             f.write("\n")
         self._update_directories()
         return None
@@ -74,7 +74,7 @@ class JournalService:
         content of file belonging to the object.
         """
         if journalentry.filepath.is_file():
-            return journalentry.filepath.read_text()
+            return journalentry.load_entry()
         else:
-            return "File doesn't exist"
+            return journalentry.no_entry()
         
