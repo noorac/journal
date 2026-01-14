@@ -228,15 +228,8 @@ def main(stdscr):
     # cont = True
     # while cont:
     #     cont = menu(journal_dict)
-
-    #Curses startup
-    curses.cbreak()
-    curses.noecho()
-    curses.curs_set(0)
-    stdscr.keypad(True)
-
     time.sleep(0.5)
-    app = App()
+    app = App("/home/noorac/.journal")
     ui = uicontroller.UIController(stdscr, app)
     ui.run()
 
