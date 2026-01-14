@@ -134,9 +134,6 @@ class UIController:
         """
         cell = self.renderer.inch(self.renderer.ypos, self.renderer.xpos)
         ch = chr(cell & curses.A_CHARTEXT)
-        # import time
-        # time.sleep(0.01)
-        # self.debug_write_and_restore("Cursor:" + str(ch), y = self.renderer.h-2)
         if ch == je.entry[-1]:
             return True
         else:
@@ -153,22 +150,6 @@ class UIController:
             else:
                 self.go_backwards()
         return None
-
-    def debug_write_and_restore(self, text: str, y: int = 0, x: int = 0):
-        # Save current cursor position
-
-        old_y = self.renderer.ypos
-        old_x = self.renderer.xpos
-
-        # Move somewhere, write
-        self.renderer.move(y, x)
-        self.renderer.addstr(text)
-        self.renderer.refresh()
-
-        # Restore cursor
-        self.renderer.move(old_y, old_x)
-        self.renderer.refresh()
-
 
     def create_new_entry(self) -> None:
         """Here we will request the inputs from the user"""
