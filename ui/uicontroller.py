@@ -1,5 +1,6 @@
 #uicontroller: event loop, screens, focus, routes keys
 import curses
+from models import journalentry
 from models.journalentry import JournalEntry
 from ui.menu.menu import Menu
 from ui.curses.renderer import Renderer
@@ -118,43 +119,82 @@ class UIController:
             self.renderer._stdscr.move(self.renderer.ypos-1, self.renderer.w-1)
         return None
 
+    def printout_inch(self, ch) -> None:
+        self.renderer._stdscr.move(self.renderer.h-3,0)
+        self.renderer._stdscr.clrtoeol()
+        self.renderer._stdscr.addstr(self.renderer.h-3, 1, ch)
+        #self.renderer.refresh()
+
+    def go_backwards(self) -> None:
+        """
+        Jumps backwards
+        """
+        if self.renderer.xpos == 0 and self.renderer.ypos != 0:
+            self.renderer._stdscr.move(self.renderer.ypos-1, self.renderer.w-1)
+        if self.renderer.xpos != 0:
+            self.renderer._stdscr.move(self.renderer.ypos, self.renderer.xpos-1)
+
+    def speed_backwards(self, je: journalentry.JournalEntry) -> None:
+        """
+        Goes looking for the cell in the screen that contains a character
+        similar to the last element in je.entry list
+        """
+        cell = self.renderer._stdscr.inch(self.renderer.ypos, self.renderer.xpos)
+        ch = chr(cell & curses.A_CHARTEXT)
+        while not (ch == je.entry[-1]):
+            savey, savex = self.renderer.ypos, self.renderer.xpos
+            self.printout_inch(ch)
+            self.renderer._stdscr.move(savey,savex)
+            self.go_backwards()
+            cell = self.renderer._stdscr.inch(self.renderer.ypos, self.renderer.xpos)
+            ch = chr(cell & curses.A_CHARTEXT)
+        return None
+
     def create_new_entry(self) -> None:
         """Here we will request the inputs from the user"""
-        entry_list = []
+        je = self.app.journalservice.new_entry(utils.date_utils.get_today())
+        self.app.journalservice.read_entry(je)
+        #entry_list = []
         #key = curses.KEY_F0
         self.renderer.clear()
         #self.renderer.refresh()
-        self.renderer._stdscr.move(1, 0)
+        self.renderer._stdscr.move(0, 0)
         #curses.echo()
 
-        self.write_todays_entries()
+        #self.write_todays_entries()
+        self.renderer.prompt(1,0, je.as_str())
         
         starting_ypos = self.renderer.ypos
         while True:
             key = self.renderer._stdscr.getch()
             if self.check_if_key_is_enter(key):
-                entry_list.append("\n")
+                je.append(key)
                 break
             elif key == curses.KEY_BACKSPACE:
-                if (self.renderer.xpos != 0):
-                    self.renderer._stdscr.move(self.renderer.ypos, self.renderer.xpos-1)
-                    if (len(entry_list) > 0):
-                        entry_list.pop(-1)
-                    self.renderer._stdscr.clrtoeol()
-                elif (self.renderer.xpos == 0 and self.renderer.ypos != starting_ypos):
-                    self.renderer._stdscr.move(self.renderer.ypos-1, self.renderer.w-1)
-                    if (len(entry_list) > 0):
-                        entry_list.pop(-1)
-                    self.renderer._stdscr.clrtoeol()
-                else:
+                if (len(je.entry) == 0) and (self.renderer.ypos == 0) and (self.renderer.xpos == 0):
                     continue
+                else:
+                    if je.entry[-1] == "\n":
+                        if self.renderer.ypos == 0:
+                            self.renderer._stdscr.clrtoeol()
+                            je.pop()
+                        else:
+                            self.renderer._stdscr.move(self.renderer.ypos-1, self.renderer.w-1)
+                            self.renderer._stdscr.clrtoeol()
+                            je.pop()
+                    elif je.entry[-1] == " ":
+                        self.go_backwards()
+                        self.renderer._stdscr.clrtoeol()
+                        je.pop()
+                    else:
+                        self.speed_backwards(je)
+                        self.renderer._stdscr.clrtoeol()
+                        je.pop()
             else:
                 self.renderer._stdscr.addstr(chr(key))
-                entry_list.append(chr(key))
+                je.append(key)
 
-        #curses.noecho()
-        je = self.app.journalservice.new_entry(utils.date_utils.get_today())
-        self.app.journalservice.write_entry(je, "".join(entry_list))
+        self.app.journalservice.write_entry(je)
 
     def list_entries(self):
         self.renderer.clear()

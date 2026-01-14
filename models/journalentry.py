@@ -46,9 +46,28 @@ class JournalEntry:
         self._entry[:] = self._filepath.read_text()
         return None
 
+    def no_entry(self) -> None:
+        """
+        Dummy function to return nothing
+        """
+        return None
+
     def as_str(self) -> str:
         """
         Returns a joined string version of self._entry
         """
         return "".join(self._entry)
 
+    def append(self, key: int) -> None:
+        """
+        Adds a character to self._entry
+        """
+        self._entry.append(chr(key))
+        return None
+
+    def pop(self) -> None:
+        """
+        Removes the last element of self._entry
+        """
+        self._entry.pop(-1)
+        return None
