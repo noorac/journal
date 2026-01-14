@@ -11,19 +11,46 @@ class UIController:
         self._stdscr = stdscr
         self.app = app
         self.create_windows()
-        self.renderer = Renderer(self.main)
+        self.main_w = Renderer(self.main)
+        self.status_w = Renderer(self.status)
         self.menu = Menu()
         self.title = "Journal"
 
     def create_windows(self) -> None:
         """
-        Creates the windows to pass to Renderer
+        Creates the windows to pass to renderer
         """
+        #Get amount we have to play with
         h, w = self._stdscr.getmaxyx()
+        #set frame sizes
+        main_frame_h = h - 6
+        main_frame_w = w
 
-        #Main window
-        self.main = self._stdscr.derwin(h, w, 0, 0)
+        status_frame_h = 6
+        status_frame_w = w
+
+        #Create frames
+        self.main_frame = self._stdscr.derwin(main_frame_h, main_frame_w, 0, 0)
+        self.status_frame = self._stdscr.derwin(status_frame_h, status_frame_w, h - status_frame_h, 0)
+
+        #Create inner windows
+        self.main = self.main_frame.derwin(main_frame_h - 2, main_frame_w - 2, 1 , 1)
+        self.status = self.status_frame.derwin(status_frame_h - 2, status_frame_w - 2, 1, 1)
+        
+        #Set keypads
         self.main.keypad(True)
+        self.status.keypad(True)
+
+        #Set borders
+        #cosider this in renderer later
+        self.main_frame.box()
+        self.status_frame.box()
+
+        self.main_frame.noutrefresh()
+        self.status_frame.noutrefresh()
+        curses.doupdate()
+
+        return None
 
     def run(self) -> None:
         """
@@ -34,10 +61,10 @@ class UIController:
             cont = self.main_menu()
 
     def draw_title(self) -> None:
-        self.renderer.title(self.title)
+        self.main_w.title(self.title)
 
     def draw_main_menu(self) -> None:
-        self.renderer.menu_lines(self.menu.main_menu)
+        self.main_w.menu_lines(self.menu.main_menu)
 
     def check_main_menu_ans(self) -> bool:
         """
@@ -45,10 +72,12 @@ class UIController:
         some other function later
         """
         cont = True
-        ans = self.renderer.get_key(8,1)
+        curses.curs_set(0)
+        ans = self.main_w.getkey(8,1)
+        curses.curs_set(1)
         try:
             if str(ans) not in [curses.KEY_ENTER ,10 , 13, "\n","", "l", "q"]:
-                self.renderer.message_centered("Not an option..")
+                self.main_w.message_centered("Not an option..")
             if ans == curses.KEY_ENTER or ans == 10 or ans == 13 or ans == "\n":
                 self.create_new_entry()
                 pass
@@ -56,7 +85,7 @@ class UIController:
                 self.list_entries()
                 pass
             if str(ans) == "q":
-                self.renderer.message_centered("Exiting ..")
+                self.main_w.message_centered("Exiting ..")
                 cont = False
         except ValueError:
             print(f"Not a string")
@@ -65,7 +94,7 @@ class UIController:
 
     def main_menu(self) -> bool:
         cont = True
-        self.renderer.clear()
+        self.main_w.clear()
         self.draw_title()
         self.draw_main_menu()
         cont = self.check_main_menu_ans()
@@ -98,10 +127,10 @@ class UIController:
         Moves the cursor one cell backwards. If at the beginning of a line it 
         jumps up one line, and starts at the end of the previous line
         """
-        if self.renderer.xpos == 0 and self.renderer.ypos != 0:
-            self.renderer.move(self.renderer.ypos-1, self.renderer.max_w-1)
-        elif self.renderer.xpos != 0:
-            self.renderer.move(self.renderer.ypos, self.renderer.xpos-1)
+        if self.main_w.xpos == 0 and self.main_w.ypos != 0:
+            self.main_w.move(self.main_w.ypos-1, self.main_w.max_w-1)
+        elif self.main_w.xpos != 0:
+            self.main_w.move(self.main_w.ypos, self.main_w.xpos-1)
         return None
 
     def compare_entry_cell(self, je: journalentry.JournalEntry) -> bool:
@@ -109,7 +138,7 @@ class UIController:
         Returns true if je.entry[-1] is equal to the content of cell under the
         cursor
         """
-        cell = self.renderer.inch(self.renderer.ypos, self.renderer.xpos)
+        cell = self.main_w.inch(self.main_w.ypos, self.main_w.xpos)
         ch = chr(cell & curses.A_CHARTEXT)
         if ch == je.entry[-1]:
             return True
@@ -132,12 +161,12 @@ class UIController:
         """Here we will request the inputs from the user"""
         je = self.app.journalservice.new_entry(utils.date_utils.get_today())
         self.app.journalservice.read_entry(je)
-        self.renderer.clear()
-        self.renderer.move(0, 0)
-        self.renderer.addstr(0,0, je.as_str())
+        self.main_w.clear()
+        self.main_w.move(0, 0)
+        self.main_w.addstr(0,0, je.as_str())
         
         while True:
-            key = self.renderer.getch()
+            key = self.main_w.getch()
             if self.check_if_key_is_enter(key):
                 je.append(key)
                 break
@@ -146,26 +175,26 @@ class UIController:
                     continue
                 else:
                     if je.entry[-1] == " ":
-                        #self.renderer.clrtoeol()
-                        self.renderer.clrtobot()
+                        #self.main_w.clrtoeol()
+                        self.main_w.clrtobot()
                         je.pop()
                         self.go_backwards()
                     elif je.entry[-1] == "\n":
                         self.go_backwards()
                         je.pop()
-                        self.renderer.clrtobot()
-                        #self.renderer.clrtoeol()
+                        self.main_w.clrtobot()
+                        #self.main_w.clrtoeol()
                         je.pop()
                     else:
                         self.find_last_entry(je)
-                        #self.renderer.clrtoeol()
-                        self.renderer.clrtobot()
+                        #self.main_w.clrtoeol()
+                        self.main_w.clrtobot()
                         je.pop()
 
             else:
                 #Checks if control/special characters were inputted.
                 if 32 <= key <= 126 or key in (9,):
-                    self.renderer.addstr(chr(key))
+                    self.main_w.addstr(chr(key))
                     je.append(key)
                 else:
                     pass
@@ -177,16 +206,16 @@ class UIController:
         Asks the user for an input to decide which entry to show.
         """
         curses.echo()
-        self.renderer.addstr(3 + (line*2), 1, "Select entry or press Enter for next page or 'q' for main menu: ")
-        self.renderer.refresh()
-        ans = self.renderer.get_multi_key(3 + (line*2), 65)#.decode("utf-8").strip()
+        self.main_w.addstr(3 + (line*2), 1, "Select entry or press Enter for next page or 'q' for main menu: ")
+        self.main_w.refresh()
+        ans = self.main_w.get_multi_key(3 + (line*2), 65)#.decode("utf-8").strip()
         curses.noecho()
         return ans
 
     def list_entries(self):
-        self.renderer.clear()
-        self.renderer.refresh_geometry()
-        lines_available = (self.renderer.max_h - 3) 
+        self.main_w.clear()
+        self.main_w.refresh_geometry()
+        lines_available = (self.main_w.max_h - 3) 
         self.draw_title()
 
         start = 0
@@ -194,13 +223,13 @@ class UIController:
         total_entries = len(self.app.journalservice.list_of_entries)
 
         while True:
-            self.renderer.clear()
+            self.main_w.clear()
             self.draw_title()
             line = 0
 
             #Displaying the entries from start to start + entries per parge
             for idx in range(start, min(start + entries_per_page, total_entries)):
-                self.renderer.addstr(3 + (line*2), 1, f"{idx}) {self.app.journalservice.list_of_entries[idx]}")
+                self.main_w.addstr(3 + (line*2), 1, f"{idx}) {self.app.journalservice.list_of_entries[idx]}")
                 line += 1
 
             #get line from user
@@ -216,20 +245,20 @@ class UIController:
                         return 0
                     idx = int(ans)
                     if 0 <= idx < total_entries:
-                        self.renderer.clear()
+                        self.main_w.clear()
                         #use load_entry(filepath) from utils.py to return an entry
 
                         je = self.app.journalservice.new_entry(self.app.journalservice.list_of_entries[idx])
                         self.app.journalservice.read_entry(je)
-                        self.renderer.addstr(0,0, je.as_str())
-                        self.renderer.refresh()
-                        self.renderer.getch()
+                        self.main_w.addstr(0,0, je.as_str())
+                        self.main_w.refresh()
+                        self.main_w.getch()
                     else:
-                        self.renderer.addstr(3 + (line*2),1,"Invalid index.")
-                        self.renderer.refresh()
-                        self.renderer.getch()
+                        self.main_w.addstr(3 + (line*2),1,"Invalid index.")
+                        self.main_w.refresh()
+                        self.main_w.getch()
                 except ValueError:
-                    self.renderer.addstr(3+(line*2),1,"Invalid input.")
-                    self.renderer.refresh()
-                    self.renderer.getch()
+                    self.main_w.addstr(3+(line*2),1,"Invalid input.")
+                    self.main_w.refresh()
+                    self.main_w.getch()
         return 0

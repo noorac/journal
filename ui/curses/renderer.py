@@ -64,12 +64,12 @@ class Renderer:
         x = (self.max_w // 2) - (len(text) // 2)
         self._win.addstr(y, max(0, x), text, curses.color_pair(1))
 
-    def get_key(self, y, x) -> str:
-        """
-        Refreshes the screen and waits for user to hit a key at the specified 
-        y and x coordinate. Returns a string
-        """
-        return self._win.getkey(y, x)
+    # def get_key(self, y, x) -> str:
+    #     """
+    #     Refreshes the screen and waits for user to hit a key at the specified 
+    #     y and x coordinate. Returns a string
+    #     """
+    #     return self._win.getkey(y, x)
 
     def get_multi_key(self, y, x) -> str:
         """
