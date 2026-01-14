@@ -96,17 +96,14 @@ class UIController:
         ENTER. If it is return True, if not return False. Main purpose is to 
         exit the getch() loop when writing a new entry.
         """
-        if ( key == curses.KEY_ENTER or key == 10 or key == 13 or key == "\n"):
-            return True
-        else:
-            return False
+        return key in ["\n", 10, curses.KEY_ENTER]
 
     def check_if_key_is_backspace(self, key: int) -> bool:
         """
         Takes a variable key, that represents a keypress from getch(). Check
         if the key is equal to the press of a backspace key.
         """
-        return key in [curses.KEY_BACKSPACE]
+        return key in ["ć", 263, curses.KEY_BACKSPACE]
 
     def go_backwards(self) -> None:
         """
