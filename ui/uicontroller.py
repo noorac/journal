@@ -119,36 +119,39 @@ class UIController:
             self.renderer._stdscr.move(self.renderer.ypos-1, self.renderer.w-1)
         return None
 
-    def printout_inch(self, ch) -> None:
-        self.renderer._stdscr.move(self.renderer.h-3,0)
-        self.renderer._stdscr.clrtoeol()
-        self.renderer._stdscr.addstr(self.renderer.h-3, 1, ch)
-        #self.renderer.refresh()
-
     def go_backwards(self) -> None:
         """
         Jumps backwards
         """
         if self.renderer.xpos == 0 and self.renderer.ypos != 0:
             self.renderer._stdscr.move(self.renderer.ypos-1, self.renderer.w-1)
-        if self.renderer.xpos != 0:
+        elif self.renderer.xpos != 0:
             self.renderer._stdscr.move(self.renderer.ypos, self.renderer.xpos-1)
+        return None
 
-    def speed_backwards(self, je: journalentry.JournalEntry) -> None:
+    def compare_entry_cell(self, je: journalentry.JournalEntry) -> bool:
+        """
+        Returns true if entry[-1] == content of cell the cursor is over
+        """
+        cell = self.renderer._stdscr.inch(self.renderer.ypos, self.renderer.xpos)
+        ch = chr(cell & curses.A_CHARTEXT)
+        if ch == je.entry[-1]:
+            return True
+        else:
+            return False
+
+    def find_last_entry(self, je: journalentry.JournalEntry) -> None:
         """
         Goes looking for the cell in the screen that contains a character
         similar to the last element in je.entry list
         """
-        cell = self.renderer._stdscr.inch(self.renderer.ypos, self.renderer.xpos)
-        ch = chr(cell & curses.A_CHARTEXT)
-        while not (ch == je.entry[-1]):
-            savey, savex = self.renderer.ypos, self.renderer.xpos
-            self.printout_inch(ch)
-            self.renderer._stdscr.move(savey,savex)
-            self.go_backwards()
-            cell = self.renderer._stdscr.inch(self.renderer.ypos, self.renderer.xpos)
-            ch = chr(cell & curses.A_CHARTEXT)
+        while True:
+            if self.compare_entry_cell(je):
+                break
+            else:
+                self.go_backwards()
         return None
+
 
     def create_new_entry(self) -> None:
         """Here we will request the inputs from the user"""
@@ -171,25 +174,24 @@ class UIController:
                 je.append(key)
                 break
             elif key == curses.KEY_BACKSPACE:
-                if (len(je.entry) == 0) and (self.renderer.ypos == 0) and (self.renderer.xpos == 0):
+                if (len(je.entry) == 0):
                     continue
                 else:
-                    if je.entry[-1] == "\n":
-                        if self.renderer.ypos == 0:
-                            self.renderer._stdscr.clrtoeol()
-                            je.pop()
-                        else:
-                            self.renderer._stdscr.move(self.renderer.ypos-1, self.renderer.w-1)
-                            self.renderer._stdscr.clrtoeol()
-                            je.pop()
-                    elif je.entry[-1] == " ":
+                    #rewrite
+                    if je.entry[-1] == " ":
+                        self.renderer._stdscr.clrtoeol()
+                        je.pop()
                         self.go_backwards()
-                        self.renderer._stdscr.clrtoeol()
+                    elif je.entry[-1] == "\n":
+                        self.go_backwards()
                         je.pop()
+                        self.renderer._stdscr.clrtoeol()
                     else:
-                        self.speed_backwards(je)
+                        #Go backwards until entry is equal to cell
+                        self.find_last_entry(je)
                         self.renderer._stdscr.clrtoeol()
                         je.pop()
+
             else:
                 self.renderer._stdscr.addstr(chr(key))
                 je.append(key)
