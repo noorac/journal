@@ -10,9 +10,20 @@ class UIController:
     def __init__(self, stdscr, app):
         self._stdscr = stdscr
         self.app = app
-        self.renderer = Renderer(stdscr)
+        self.create_windows()
+        self.renderer = Renderer(self.main)
         self.menu = Menu()
         self.title = "Journal"
+
+    def create_windows(self) -> None:
+        """
+        Creates the windows to pass to Renderer
+        """
+        h, w = self._stdscr.getmaxyx()
+
+        #Main window
+        self.main = self._stdscr.derwin(h, w, 0, 0)
+        self.main.keypad(True)
 
     def run(self) -> None:
         """
@@ -111,9 +122,9 @@ class UIController:
         jumps up one line, and starts at the end of the previous line
         """
         if self.renderer.xpos == 0 and self.renderer.ypos != 0:
-            self.renderer._stdscr.move(self.renderer.ypos-1, self.renderer.w-1)
+            self.renderer.move(self.renderer.ypos-1, self.renderer.w-1)
         elif self.renderer.xpos != 0:
-            self.renderer._stdscr.move(self.renderer.ypos, self.renderer.xpos-1)
+            self.renderer.move(self.renderer.ypos, self.renderer.xpos-1)
         return None
 
     def compare_entry_cell(self, je: journalentry.JournalEntry) -> bool:
@@ -121,8 +132,11 @@ class UIController:
         Returns true if je.entry[-1] is equal to the content of cell under the
         cursor
         """
-        cell = self.renderer._stdscr.inch(self.renderer.ypos, self.renderer.xpos)
+        cell = self.renderer.inch(self.renderer.ypos, self.renderer.xpos)
         ch = chr(cell & curses.A_CHARTEXT)
+        # import time
+        # time.sleep(0.01)
+        # self.debug_write_and_restore("Cursor:" + str(ch), y = self.renderer.h-2)
         if ch == je.entry[-1]:
             return True
         else:
@@ -140,17 +154,32 @@ class UIController:
                 self.go_backwards()
         return None
 
+    def debug_write_and_restore(self, text: str, y: int = 0, x: int = 0):
+        # Save current cursor position
+
+        old_y = self.renderer.ypos
+        old_x = self.renderer.xpos
+
+        # Move somewhere, write
+        self.renderer.move(y, x)
+        self.renderer.addstr(text)
+        self.renderer.refresh()
+
+        # Restore cursor
+        self.renderer.move(old_y, old_x)
+        self.renderer.refresh()
+
 
     def create_new_entry(self) -> None:
         """Here we will request the inputs from the user"""
         je = self.app.journalservice.new_entry(utils.date_utils.get_today())
         self.app.journalservice.read_entry(je)
         self.renderer.clear()
-        self.renderer._stdscr.move(0, 0)
+        self.renderer.move(0, 0)
         self.renderer.prompt(0,0, je.as_str())
         
         while True:
-            key = self.renderer._stdscr.getch()
+            key = self.renderer.getch()
             if self.check_if_key_is_enter(key):
                 je.append(key)
                 break
@@ -158,20 +187,32 @@ class UIController:
                 if (len(je.entry) == 0):
                     continue
                 else:
+                    # self.debug_write_and_restore("Key:" + str(key), y = self.renderer.h-5)
+                    # self.debug_write_and_restore("Entry:" + str(je.entry[-1]), y = self.renderer.h-3)
                     if je.entry[-1] == " ":
-                        self.renderer.clrtoeol()
+                        #self.renderer.clrtoeol()
+                        self.renderer.clrtobot()
                         je.pop()
                         self.go_backwards()
                     elif je.entry[-1] == "\n":
                         self.go_backwards()
                         je.pop()
-                        self.renderer.clrtoeol()
-                        self.renderer.clrtoeol()
+                        self.renderer.clrtobot()
+                        #self.renderer.clrtoeol()
+                        je.pop()
+                    else:
+                        self.find_last_entry(je)
+                        #self.renderer.clrtoeol()
+                        self.renderer.clrtobot()
                         je.pop()
 
             else:
-                self.renderer._stdscr.addstr(chr(key))
-                je.append(key)
+                #Checks if control/special characters were inputted.
+                if 32 <= key <= 126 or key in (9,):
+                    self.renderer.addstr(chr(key))
+                    je.append(key)
+                else:
+                    pass
 
         self.app.journalservice.write_entry(je)
 
@@ -220,15 +261,15 @@ class UIController:
                         self.renderer.prompt(1,1, self.app.journalservice.read_entry(je))
                         self.renderer.refresh()
                         #TODO: fix this underscore
-                        self.renderer._stdscr.getch()
+                        self.renderer.getch()
                     else:
                         self.renderer.prompt(3 + (line*2),1,"Invalid index.")
                         self.renderer.refresh()
                         #TODO: fix this udenrscore
-                        self.renderer._stdscr.getch()
+                        self.renderer.getch()
                 except ValueError:
                     self.renderer.prompt(3+(line*2),1,"Invalid input.")
                     self.renderer.refresh()
                     #TODO: fix this udenrscore
-                    self.renderer._stdscr.getch()
+                    self.renderer.getch()
         return 0

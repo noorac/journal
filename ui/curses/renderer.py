@@ -3,8 +3,8 @@ import curses
 import time
 
 class Renderer:
-    def __init__(self, stdscr) -> None:
-        self._stdscr = stdscr
+    def __init__(self, win) -> None:
+        self._win = win
         self.refresh_geometry()
         curses.use_default_colors();
         self.create_color_pairs()
@@ -26,24 +26,30 @@ class Renderer:
         """
         Returns the y position of the cursor
         """
-        return self._stdscr.getyx()[0]
+        return self._win.getyx()[0]
 
     @property
     def xpos(self) -> int:
         """
         Returns the x position of the cursor
         """
-        return self._stdscr.getyx()[1]
+        return self._win.getyx()[1]
 
     #METHODS
 
-    def clear(self) -> None:
-        """Clear the screen of any drawing"""
-        self._stdscr.clear()
+    def __getattr__(self, name):
+        """
+        Called when attribute isn't found on Renderer
+        """
+        return getattr(self._win, name)
 
-    def refresh(self) -> None:
-        """Redraws the screen"""
-        self._stdscr.refresh()
+    # def clear(self) -> None:
+    #     """Clear the screen of any drawing"""
+    #     self._win.clear()
+
+    # def refresh(self) -> None:
+    #     """Redraws the screen"""
+    #     self._win.refresh()
 
     def create_color_pairs(self) -> None:
         """Generates curses color pairs using following logic:
@@ -53,9 +59,9 @@ class Renderer:
 
     def refresh_geometry(self) -> None:
         """Refreshes the heigth and width values of the window by calling
-        getmaxyx on stdscr
+        getmaxyx on win
         """
-        self._h, self._w = self._stdscr.getmaxyx()
+        self._h, self._w = self._win.getmaxyx()
 
     def title(self, text: str) -> None:
         """Draws the title
@@ -64,14 +70,14 @@ class Renderer:
         self.refresh_geometry()
         y = 1
         x = (self.w // 2) - (len(text) // 2)
-        self._stdscr.addstr(y, max(0, x), text, curses.color_pair(1))
+        self._win.addstr(y, max(0, x), text, curses.color_pair(1))
 
     def get_key(self, y, x) -> str:
         """
         Refreshes the screen and waits for user to hit a key at the specified 
         y and x coordinate. Returns a string
         """
-        return self._stdscr.getkey(y, x)
+        return self._win.getkey(y, x)
 
     def get_multi_key(self, y, x) -> str:
         """
@@ -80,7 +86,7 @@ class Renderer:
         """
         curses.echo()
         try:
-            inputstr = self._stdscr.getstr(y, x)
+            inputstr = self._win.getstr(y, x)
         finally:
             curses.noecho()
         try:
@@ -88,7 +94,7 @@ class Renderer:
         #TODO: FIX EXCEPTION
         except Exception:
             return ""
-            return self._stdscr.getkey(y, x)
+            return self._win.getkey(y, x)
 
     def menu_lines(self, lines: list[str], 
                    start_y: int = 3, start_x: int = 1) -> None:
@@ -98,7 +104,7 @@ class Renderer:
         @param start_x int: what character x should start
         """
         for i, line in enumerate(lines):
-            self._stdscr.addstr(start_y + i, start_x, line)
+            self._win.addstr(start_y + i, start_x, line)
 
     def prompt(self, y: int, x: int, prompt_text: str) -> None:
         """Called to make a prompt to screen
@@ -106,7 +112,8 @@ class Renderer:
         @param x int: what character x should the prompt be on
         @param prompt_text str: the text of the prompt
         """
-        self._stdscr.addstr(y, x, prompt_text)
+        self._win.addstr(y, x, prompt_text)
+
 
     def message_centered(self, text: str, pause_ms: int = 750) -> None:
         """Send a message to the center of the screen for a certain amount
@@ -114,17 +121,11 @@ class Renderer:
         @param text str: the text to be printed
         @param pause_ms int: the amount of time in ms(default 750)
         """
-        self._stdscr.clear()
+        self._win.clear()
         self.refresh_geometry()
         y = 1
         x = (self.w // 2) - (len(text) // 2)
-        self._stdscr.addstr(y, max(0, x), text)
-        self._stdscr.refresh()
+        self._win.addstr(y, max(0, x), text)
+        self._win.refresh()
         time.sleep(pause_ms / 1000)
 
-    def clrtoeol(self) -> None:
-        """
-        Calls the clrtoeol function on the window.
-        """
-        self._stdscr.clrtoeol()
-        return None
