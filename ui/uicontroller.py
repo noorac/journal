@@ -101,24 +101,12 @@ class UIController:
         else:
             return False
 
-        
-    # def check_if_key_is_backspace(self, key: int) -> bool:
-    #     """
-    #     Takes a variable called key, that represents a keypress from getch().
-    #     Check if this key is qual to several different types of values for 
-    #     BACKSPACE. If it is, then return True, if not return False.
-    #     """
-    #     return key in ["ć", curses.KEY_BACKSPACE]
-
-    # def check_and_move_if_backspacing_at_start_of_line(self, 
-    #                                                    starting_ypos: int) -> None:
-    #     """
-    #     Checks if the cursor is at the beginning of the line, and moves it one
-    #     line up if it is, except if it is the first line of the entry.
-    #     """
-    #     if self.renderer.xpos == 0 and (not (self.renderer.ypos == starting_ypos)):
-    #         self.renderer._stdscr.move(self.renderer.ypos-1, self.renderer.w-1)
-    #     return None
+    def check_if_key_is_backspace(self, key: int) -> bool:
+        """
+        Takes a variable key, that represents a keypress from getch(). Check
+        if the key is equal to the press of a backspace key.
+        """
+        return key in [curses.KEY_BACKSPACE]
 
     def go_backwards(self) -> None:
         """
@@ -169,7 +157,7 @@ class UIController:
             if self.check_if_key_is_enter(key):
                 je.append(key)
                 break
-            elif key == curses.KEY_BACKSPACE:
+            elif self.check_if_key_is_backspace(key):
                 if (len(je.entry) == 0):
                     continue
                 else:
