@@ -62,7 +62,7 @@ class JournalEntry:
         """
         Adds a character to self._entry
         """
-        self._entry.append(chr(key))
+        self._entry.append(key)
         return None
 
     def pop(self) -> None:

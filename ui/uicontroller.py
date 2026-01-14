@@ -11,10 +11,11 @@ class UIController:
         self._stdscr = stdscr
         self.app = app
         self.create_windows()
+        self.title_w = Renderer(self.title)
         self.main_w = Renderer(self.main)
         self.status_w = Renderer(self.status)
         self.menu = Menu()
-        self.title = "Journal"
+        self.title_text = "Journal"
 
     def create_windows(self) -> None:
         """
@@ -23,29 +24,37 @@ class UIController:
         #Get amount we have to play with
         h, w = self._stdscr.getmaxyx()
         #set frame sizes
-        main_frame_h = h - 6
+        title_frame_h = 4
+        title_frame_w = w
+
+        main_frame_h = h - 10
         main_frame_w = w
 
         status_frame_h = 6
         status_frame_w = w
 
         #Create frames
-        self.main_frame = self._stdscr.derwin(main_frame_h, main_frame_w, 0, 0)
+        self.title_frame = self._stdscr.derwin(title_frame_h, title_frame_w, 0, 0)
+        self.main_frame = self._stdscr.derwin(main_frame_h, main_frame_w, h - main_frame_h - status_frame_h, 0)
         self.status_frame = self._stdscr.derwin(status_frame_h, status_frame_w, h - status_frame_h, 0)
 
         #Create inner windows
-        self.main = self.main_frame.derwin(main_frame_h - 2, main_frame_w - 2, 1 , 1)
+        self.title = self.title_frame.derwin(title_frame_h - 2, title_frame_w - 2, 1, 1)
+        self.main = self.main_frame.derwin(main_frame_h - 2, main_frame_w - 2, 1, 1)
         self.status = self.status_frame.derwin(status_frame_h - 2, status_frame_w - 2, 1, 1)
         
         #Set keypads
+        self.title.keypad(True)
         self.main.keypad(True)
         self.status.keypad(True)
 
         #Set borders
         #cosider this in renderer later
+        self.title_frame.box()
         self.main_frame.box()
         self.status_frame.box()
 
+        self.title_frame.noutrefresh()
         self.main_frame.noutrefresh()
         self.status_frame.noutrefresh()
         curses.doupdate()
@@ -61,7 +70,7 @@ class UIController:
             cont = self.main_menu()
 
     def draw_title(self) -> None:
-        self.main_w.title(self.title)
+        self.title_w.title(self.title_text)
 
     def draw_main_menu(self) -> None:
         self.main_w.menu_lines(self.menu.main_menu)
@@ -120,7 +129,7 @@ class UIController:
         if the key is equal to several different types of values for BACKSPACE.
         If it is return True, if not return False.
         """
-        return key in ["ć", 263, curses.KEY_BACKSPACE]
+        return key in ["ć", 263, curses.KEY_BACKSPACE, "KEY_BACKSPACE"]
 
     def go_backwards(self) -> None:
         """
@@ -166,7 +175,7 @@ class UIController:
         self.main_w.addstr(0,0, je.as_str())
         
         while True:
-            key = self.main_w.getch()
+            key = self.main_w.getkey()
             if self.check_if_key_is_enter(key):
                 je.append(key)
                 break
@@ -192,12 +201,9 @@ class UIController:
                         je.pop()
 
             else:
-                #Checks if control/special characters were inputted.
-                if 32 <= key <= 126 or key in (9,):
-                    self.main_w.addstr(chr(key))
+                if len(key) == 1:
+                    self.main_w.addstr(key)
                     je.append(key)
-                else:
-                    pass
 
         self.app.journalservice.write_entry(je)
 

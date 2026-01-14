@@ -47,7 +47,7 @@ class Renderer:
         """Generates curses color pairs using following logic:
         @pair 1: fg=black, bg=red
         """
-        curses.init_pair(1,curses.COLOR_BLACK,curses.COLOR_RED)
+        curses.init_pair(1,curses.COLOR_MAGENTA,-1)
 
     def refresh_geometry(self) -> None:
         """Refreshes the heigth and width values of the window by calling
@@ -60,16 +60,15 @@ class Renderer:
         @param text: the string of text to draw as the title
         """
         self.refresh_geometry()
-        y = 1
+        y = 0
         x = (self.max_w // 2) - (len(text) // 2)
-        self._win.addstr(y, max(0, x), text, curses.color_pair(1))
+        
+        #Hardcoded attributes:
+        attr = curses.color_pair(1) | curses.A_UNDERLINE | curses.A_BOLD
 
-    # def get_key(self, y, x) -> str:
-    #     """
-    #     Refreshes the screen and waits for user to hit a key at the specified 
-    #     y and x coordinate. Returns a string
-    #     """
-    #     return self._win.getkey(y, x)
+        self._win.addstr(y, max(0, x), text, attr)
+        self._win.refresh()
+
 
     def get_multi_key(self, y, x) -> str:
         """
